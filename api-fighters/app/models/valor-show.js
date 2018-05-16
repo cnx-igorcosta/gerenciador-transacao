@@ -5,7 +5,6 @@ const ValorPorShowSchema = new Schema (
     {
         id_show: { type: String, required: true },
         valor: { type: Number, required: true },
-        id_transacao: {type: String, required: true},
     }
 )
 

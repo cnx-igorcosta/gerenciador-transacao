@@ -39,6 +39,8 @@ services:
     volumes:
       - ./api-foo:/api-foo
     working_dir: /api-foo
+    ports:
+      - 3000:3000
     command: bash -c "cd /api-foo && npm i && npm run build && npm start"
     networks:
       - app
@@ -51,6 +53,8 @@ services:
     volumes:
       - ./api-fighters:/api-fighters
     working_dir: /api-fighters
+    ports:
+      - 4000:4000
     command: bash -c "cd /api-fighters && npm i && npm run build && npm start"
     networks:
       - app
