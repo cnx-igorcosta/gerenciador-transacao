@@ -24,7 +24,8 @@ const getIngressoShowValido = (req, res) => {
 
 //POST /api/v1/tickets
 const postIngressoPorShow = (req, res) => {
-    const ingressoPorShow = req.body
+    const ingressoPorShow = req.body.requestBody || req.body
+    
     Promise.resolve(validar(ingressoPorShow))
         .then(ingressoPorShow => verificarDuplicidade(ingressoPorShow))
         .then(ingressoPorShow => ingressoPorShowDb.salvar(ingressoPorShow))
@@ -39,7 +40,7 @@ const verificarDuplicidade = ingressoPorShow => {
         try{
             ingressoPorShowDb.buscarPorIngressoEShow(id_ingresso, id_show)
                 .then(ingressos => {
-                    if(ingressos.length) reject(new Error('Ingresso por Show duplicado!'))
+                    if(ingressos && ingressos.length) reject(new Error('Ingresso por Show duplicado!'))
                     else resolve(ingressoPorShow)
                 })
             } catch(err) {

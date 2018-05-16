@@ -56,7 +56,7 @@ const gravarIngressoPorShow = transacao => {
     return new Promise((resolve, reject) => {
         postToApi(uri, ingressoPorShow)
         .then(response => {
-            if(response.statusCode !== 204) 
+            if(response.statusCode !== 200) 
             reject(new Error('Não foi possível se comunicar com a API FOO.'))
             resolve(transacao)
         })
@@ -73,7 +73,7 @@ const gravarValorPorShow = transacao => {
     return new Promise((resolve, reject) => {
         postToApi(uri, valorPorShow)
             .then(response => {
-                if(response.statusCode !== 204) 
+                if(response.statusCode !== 200) 
                     reject(new Error('Não foi possível se comunicar com a API FIGHTERS.'))
                 resolve(transacao)
             })

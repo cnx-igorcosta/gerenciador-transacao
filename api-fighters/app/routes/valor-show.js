@@ -5,7 +5,7 @@ const ticketsStorage = []
 
 //POST /api/v1/valores
 const postValorPorShow = (req, res) => {
-    res.status(204).json({})
+    res.status(200).json({})
 }
 
 //GET /api/v1/valores
