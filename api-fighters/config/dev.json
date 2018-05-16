@@ -1,4 +1,4 @@
 {
-    "DBHost": "mongodb://localhost:27017/ingresso-por-show-dev"
+    "DBHost": "mongodb://localhost:27017/valor-por-show-dev"
 }
   
