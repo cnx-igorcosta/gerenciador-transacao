@@ -2,12 +2,12 @@ import Transacao from '../models/transacao'
 
 const transacaoDb = {}
 
-transacaoDb.listar = () => {
+transacaoDb.buscarPorIdTransacao = (id_transacao) => {
     return new Promise((resolve, reject) => {
-        const query = Transacao.find({})
-        query.exec((err, transacoes) => {
+        const query = Transacao.findById(id_transacao)
+        query.exec((err, transao) => {
             if(err) reject(err)
-            resolve(transacoes)
+            resolve(transao)
         })
     })
 }
@@ -20,6 +20,16 @@ transacaoDb.salvar = transacao => {
             resolve(transacao)
         })
     })
+}
+
+transacaoDb.atualizarEstado = (estado, id_transacao) => {
+    return new Promise((resolve, reject) => {
+        Transacao.findOneAndUpdate({ _id: id_transacao }, { $set:{ estado: estado } }, { new: true }, 
+                (err, transacao) => {
+                    if(err) reject(err)
+                    resolve(transacao)
+                })
+    })  
 }
 
 export default transacaoDb

@@ -5,18 +5,32 @@ import transacaoDb from '../db/transacao'
 import queueSender from '../queue'
 import * as estados from '../estados'
 
+//GET at /api/v1/transacao
+const getTransacao = (req, res) => {
+    const id_transacao = req.query.id_transacao
+    transacaoDb.buscarPorIdTransacao(id_transacao)
+        .then(transacao => res.status(200).json({ transacao }))
+        .catch(err => res.status(400).json(err))
+}
 
-// POST at /transacao
+// POST at /api/v1/transacao
 const postTransacao = (req, res) => {
     const compraIngresso = req.body 
     // TODO: validar se combinação ingresso/show já foi gravada anteriormente
     Promise.resolve(validar(compraIngresso))
+        // Salva uma nova transação com estado 'pending'
         .then(pedido => salvarTransacao(pedido))
-        //TODO: ALTERA ESTADO PARA IN PROCESS
-        .then(compraIngresso => gravarIngressoPorShow(compraIngresso))
-        .then(compraIngresso => gravarValorPorShow(compraIngresso))
-        //TODO: ALTERA ESTADO PARA SUCCESS
-        .then(compraIngresso => res.status(200).json(compraIngresso))
+        // Atualiza estado da transacao para 'in_process'
+        .then(transacao => transacaoDb.atualizarEstado(estados.IN_PROCESS, transacao._id))
+        // Envia informações de ingresso por show para gravar na API FOO
+        .then(transacao => gravarIngressoPorShow(transacao))
+        // Envia informações de valor por show para gravar na API FIGHTERS
+        .then(transacao => gravarValorPorShow(transacao))
+        // Atualiza estado da transacao para 'success'
+        .then(transacao => transacaoDb.atualizarEstado(estados.SUCCESS, transacao._id))
+        // Retorna status 204 com os dados da transação criada
+        .then(transacao => res.status(200).json({ transacao }))
+        // Trata erro colocando na fila para tentativa de processamento posterior
         .catch(err => handleError(err, res))
 }
 
@@ -29,42 +43,39 @@ const salvarTransacao = (compraIngresso) => {
         const transacao = Object.assign(compraIngresso)
         transacao.estado = estados.PENDING
         return Promise.resolve(transacaoDb.salvar(transacao))
-            .then(transacao => {
-                compraIngresso.id_transacao = transacao._id
-                return transacao 
-            })
     }
 }
 
-const gravarIngressoPorShow = compraIngresso => {
+const gravarIngressoPorShow = transacao => {
     const uri = 'http://api-foo:3000/api/v1/tickets'
     const ingressoPorShow = {
-        id_ingresso: compraIngresso.id_ingresso,
-        id_show: compraIngresso.id_show,
+        id_ingresso: transacao.id_ingresso,
+        id_show: transacao.id_show,
     }
+    
     return new Promise((resolve, reject) => {
         postToApi(uri, ingressoPorShow)
-            .then(response => {
-                if(response.statusCode !== 204) 
-                    reject(new Error('Não foi possível se comunicar com a API FOO.'))
-                resolve(compraIngresso)
-            })
-            .catch(err => reject(err))
+        .then(response => {
+            if(response.statusCode !== 204) 
+            reject(new Error('Não foi possível se comunicar com a API FOO.'))
+            resolve(transacao)
+        })
+        .catch(err => reject(err))
     })
 }
 
-const gravarValorPorShow = compraIngresso => {
+const gravarValorPorShow = transacao => {
     const uri = 'http://api-fighters:4000/api/v1/valores'
     const valorPorShow = {
-        id_show: compraIngresso.id_show,
-        valor: compraIngresso.valor
+        id_show: transacao.id_show,
+        valor: transacao.valor
     }
     return new Promise((resolve, reject) => {
         postToApi(uri, valorPorShow)
             .then(response => {
                 if(response.statusCode !== 204) 
                     reject(new Error('Não foi possível se comunicar com a API FIGHTERS.'))
-                resolve(compraIngresso)
+                resolve(transacao)
             })
             .catch(err => reject(err))
     })
@@ -89,4 +100,4 @@ const handleError = (err, res) => {
     res.status(400).json(err)
 }
 
-export { postTransacao }
+export { postTransacao, getTransacao }
