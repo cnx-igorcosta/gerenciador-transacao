@@ -1,4 +1,5 @@
 import amqp from 'amqplib/callback_api'
+import { executarFluxoTransacao } from '../routes/transacao'
 
 // URI de conexao com o Rabbitmq
 const uri = 'amqp://rabbitmq'
@@ -22,6 +23,7 @@ const transacaoReceiver = {
             ch.consume(queue, msg => {
               console.log(`Received ${msg.content}`)
               const compraIngresso = JSON.parse(msg.content)
+              executarFluxoTransacao(null, compraIngresso)
             }, {noAck: false});
           }
         })
@@ -29,8 +31,6 @@ const transacaoReceiver = {
     })
   }
 }
-
-//2018-05-13T21:38:01.988320963Z Message acked
 
 const hanldeError = (err, conn, mensagem) => {
   console.log(mensagem, err)

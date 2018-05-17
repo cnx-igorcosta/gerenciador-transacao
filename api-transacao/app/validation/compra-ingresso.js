@@ -1,8 +1,10 @@
 import moment from 'moment'
 
 let errors = []
-const validar = compraIngresso => {
+const validar = context => {
+    const compraIngresso = context.compraIngresso
     errors = []
+
     return new Promise((resolve, reject) => {
         if(required(compraIngresso.data_compra, 'data_compra')) {
             // valida se é data valida
@@ -22,7 +24,7 @@ const validar = compraIngresso => {
         // }
 
         if(errors.length) reject({ errors })
-        resolve(compraIngresso)
+        resolve(context)
     }) 
 }
 

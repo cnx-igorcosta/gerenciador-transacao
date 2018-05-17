@@ -24,31 +24,12 @@ const getIngressoShowValido = (req, res) => {
 
 //POST /api/v1/tickets
 const postIngressoPorShow = (req, res) => {
-    const ingressoPorShow = req.body.requestBody || req.body
-    
+    const ingressoPorShow = req.body
     Promise.resolve(validar(ingressoPorShow))
-        .then(ingressoPorShow => verificarDuplicidade(ingressoPorShow))
         .then(ingressoPorShow => ingressoPorShowDb.salvar(ingressoPorShow))
         .then(ingressoPorShow => res.status(200).json(ingressoPorShow))
         .catch(err => handleError(err, res))
 }
-
-const verificarDuplicidade = ingressoPorShow => {
-    const id_ingresso = ingressoPorShow.id_ingresso
-    const id_show = ingressoPorShow.id_show
-    return new Promise((resolve, reject) => {
-        try{
-            ingressoPorShowDb.buscarPorIngressoEShow(id_ingresso, id_show)
-                .then(ingressos => {
-                    if(ingressos && ingressos.length) reject(new Error('Ingresso por Show duplicado!'))
-                    else resolve(ingressoPorShow)
-                })
-            } catch(err) {
-                reject(err)
-            }
-        })
-}
-
 
 const handleError = (err, res) => {
     if(process.env.NODE_ENV !== 'test'){

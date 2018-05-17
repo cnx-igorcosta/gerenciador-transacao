@@ -22,9 +22,20 @@ transacaoDb.salvar = transacao => {
     })
 }
 
-transacaoDb.atualizarEstado = (estado, id_transacao) => {
+transacaoDb.atualizarEstado = (estado, context) => {
+    const id_transacao = context.compraIngresso.id_transacao
     return new Promise((resolve, reject) => {
         Transacao.findOneAndUpdate({ _id: id_transacao }, { $set:{ estado: estado } }, { new: true }, 
+                (err, transacao) => {
+                    if(err) reject(err)
+                    resolve(context)
+                })
+    })  
+}
+
+transacaoDb.atualizarEstadoErro = (id_transacao, estado, motivoFalha) => {
+    return new Promise((resolve, reject) => {
+        Transacao.findOneAndUpdate({ _id: id_transacao }, { $set:{ estado: estado, motivoFalha: motivoFalha } }, { new: true }, 
                 (err, transacao) => {
                     if(err) reject(err)
                     resolve(transacao)

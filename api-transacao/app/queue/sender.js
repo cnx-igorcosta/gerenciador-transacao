@@ -2,11 +2,12 @@ import amqp from 'amqplib/callback_api'
 
 // URI de conexao com o Rabbitmq
 const uri = 'amqp://rabbitmq'
-
+// Nome da queue
 const queue = 'TRANSACAO_QUEUE'
 
+const transacaoQueue = {}
 // Objeto com funcao de conexao com o Rabbitmq e envio de mensagens
-const send = (msg) => {
+transacaoQueue.send = (msg) => {
     amqp.connect(uri, (err, conn) => {
       if(err) hanldeError(err, conn, 'Erro ao tentar se conectar.')
       else {
@@ -37,4 +38,4 @@ const hanldeError = (err, conn) => {
   throw new Error(`Erro ao tentar enviar mensagem via rabbitmq: ${err.message}`)
 } 
 
-export default send
+export default transacaoQueue

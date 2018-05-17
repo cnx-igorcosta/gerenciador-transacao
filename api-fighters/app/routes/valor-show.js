@@ -8,7 +8,6 @@ const getValorPorShow = (req, res) => {
         .then(valores => {
             if(valores.length) {
                 const valor = valores.reduce((memo, d) => memo + d.valor, 0)
-                console.log('valor', valor)
                 res.status(200).json({ valor })
             } else {
                 res.status(200).json({ valor: 0 })
