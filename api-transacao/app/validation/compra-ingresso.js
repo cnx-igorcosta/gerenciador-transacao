@@ -17,15 +17,10 @@ const validar = context => {
         required(compraIngresso.id_ingresso, 'id_ingresso')
         required(compraIngresso.id_show, 'id_show')
         required(compraIngresso.valor, 'valor')
-        // if(required(compraIngresso.valor, 'valor')) {
-        //     if(number(compraIngresso.valor, 'valor')) {
-        //         negative(compraIngresso.valor, 'valor')
-        //     }
-        // }
 
-        if(errors.length) reject({ errors })
+        if(errors.length) reject({ validation_error: true, errors })
         resolve(context)
-    }) 
+    })
 }
 
 const required = (value, name) => {
@@ -48,22 +43,6 @@ const beforeToday = (value, name) => {
     const totay = moment().format('YYYY-MM-DD')
     if(moment(value, 'YYYY-MM-DD').isBefore(totay)) {
         errors.push(`O campo ${name} não pode ser uma data anterior à data atual`)
-        return false
-    }
-    return true
-}
-
-const number = (value, name) => {
-    if (typeof value != 'number') {
-        errors.push(`O campo ${name} deve ser um campo numérico`)
-        return false
-    }
-    return true;
-}
-
-const negative = (value, name) => {
-    if(0 > value) {
-        errors.push(`O campo ${name} não pode ser um número negativo`)
         return false
     }
     return true

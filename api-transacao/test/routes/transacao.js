@@ -14,11 +14,24 @@ describe('Validação da API Rest Transacao', () => {
             done();
       })
     })
-  
-    describe('/POST transacao', () => {
+
+    describe("/GET '/'", () => {
+        it('deve retornar mensagem bem vindo', done => {
+            chai.request(server)
+                .get('/')
+                .end((err, res) => {
+                    res.should.have.property('status', 200)
+                    res.should.have.property('body').and.be.a.Object()
+                    res.body.should.have.property('message').and.be.a.String()
+                    done()
+                })
+        })
+      })
+
+    describe('/POST /api/v1/transacao', () => {
         it('deve retornar erro de todos 5 os campos obrigatorios', done => {
             chai.request(server)
-                .post('/transacao')
+                .post('/api/v1/transacao')
                 .end((err, res) => {
                     res.should.have.property('status', 400)
                     res.should.have.property('body').and.be.a.Object()
@@ -30,7 +43,7 @@ describe('Validação da API Rest Transacao', () => {
         it('deve retornar erro de campo obrigatório quando não é enviada data_compra', done => {
             const compraIngresso = { data_compra: '', account_id: '10011011001', id_ingresso: '12345', id_show: '9876', valor: 670.30 }
             chai.request(server)
-                .post('/transacao')
+                .post('/api/v1/transacao')
                 .send(compraIngresso)
                 .end((err, res) => {
                     res.should.have.property('status', 400)
@@ -44,7 +57,7 @@ describe('Validação da API Rest Transacao', () => {
         it('deve retornar erro de data inválida quando data_compra não for um campo data válido', done => {
             const compraIngresso = { data_compra: 'invalida', account_id: '10011011001', id_ingresso: '12345', id_show: '9876', valor: 670.30 }
             chai.request(server)
-                .post('/transacao')
+                .post('/api/v1/transacao')
                 .send(compraIngresso)
                 .end((err, res) => {
                     res.should.have.property('status', 400)
@@ -59,7 +72,7 @@ describe('Validação da API Rest Transacao', () => {
             const dataAtual = moment().subtract(1, "days").format('YYYY-MM-DD').toString()
             const compraIngresso = { data_compra: dataAtual, account_id: '10011011001', id_ingresso: '12345', id_show: '9876', valor: 670.30 }
             chai.request(server)
-                .post('/transacao')
+                .post('/api/v1/transacao')
                 .send(compraIngresso)
                 .end((err, res) => {
                     res.should.have.property('status', 400)
@@ -74,7 +87,7 @@ describe('Validação da API Rest Transacao', () => {
             const dataAtual = moment().format('YYYY-MM-DD').toString()
             const compraIngresso = { data_compra: dataAtual, account_id: '', id_ingresso: '12345', id_show: '9876', valor: 670.30 }
             chai.request(server)
-                .post('/transacao')
+                .post('/api/v1/transacao')
                 .send(compraIngresso)
                 .end((err, res) => {
                     res.should.have.property('status', 400)
@@ -89,7 +102,7 @@ describe('Validação da API Rest Transacao', () => {
             const dataAtual = moment().format('YYYY-MM-DD').toString()
             const compraIngresso = { data_compra: dataAtual, account_id: '312312', id_ingresso: '', id_show: '9876', valor: 670.30 }
             chai.request(server)
-                .post('/transacao')
+                .post('/api/v1/transacao')
                 .send(compraIngresso)
                 .end((err, res) => {
                     res.should.have.property('status', 400)
@@ -104,7 +117,7 @@ describe('Validação da API Rest Transacao', () => {
             const dataAtual = moment().format('YYYY-MM-DD').toString()
             const compraIngresso = { data_compra: dataAtual, account_id: '312312', id_ingresso: '31213', id_show: '', valor: 670.30 }
             chai.request(server)
-                .post('/transacao')
+                .post('/api/v1/transacao')
                 .send(compraIngresso)
                 .end((err, res) => {
                     res.should.have.property('status', 400)
@@ -119,7 +132,7 @@ describe('Validação da API Rest Transacao', () => {
             const dataAtual = moment().format('YYYY-MM-DD').toString()
             const compraIngresso = { data_compra: dataAtual, account_id: '312312', id_ingresso: '31213', id_show: '646345', valor: null }
             chai.request(server)
-                .post('/transacao')
+                .post('/api/v1/transacao')
                 .send(compraIngresso)
                 .end((err, res) => {
                     res.should.have.property('status', 400)
@@ -130,62 +143,19 @@ describe('Validação da API Rest Transacao', () => {
                     done()
                 })
         })
-        // it('deve retornar erro quando valor nao for numérico', done => {
-        //     const dataAtual = moment().format('YYYY-MM-DD').toString()
-        //     const compraIngresso = { data_compra: dataAtual, account_id: '312312', id_ingresso: '31213', id_show: '646345', valor: 'valor nao numerico' }
-        //     chai.request(server)
-        //         .post('/transacao')
-        //         .send(compraIngresso)
-        //         .end((err, res) => {
-        //             res.should.have.property('status', 400)
-        //             res.should.have.property('body').and.be.a.Object()
-        //             res.body.errors.should.be.a.Array()
-        //             res.body.errors.should.with.lengthOf(1)
-        //             res.body.errors[0].should.be.eql('O campo valor deve ser um campo numérico')
-        //             done()
-        //         })
-        // })
-        // it('deve retornar erro quando valor for menor que 0', done => {
-        //     const dataAtual = moment().format('YYYY-MM-DD').toString()
-        //     const compraIngresso = { data_compra: dataAtual, account_id: '312312', id_ingresso: '31213', id_show: '646345', valor: -40 }
-        //     chai.request(server)
-        //         .post('/transacao')
-        //         .send(compraIngresso)
-        //         .end((err, res) => {
-        //             res.should.have.property('status', 400)
-        //             res.should.have.property('body').and.be.a.Object()
-        //             res.body.errors.should.be.a.Array()
-        //             res.body.errors.should.with.lengthOf(1)
-        //             res.body.errors[0].should.be.eql('O campo valor não pode ser um número negativo')
-        //             done()
-        //         })
-        // })
-
-
-        // it('Não deve retornar erro quando data_compra for igual a data atual', done => {
-        //     const dataAtual = moment().format('YYYY-MM-DD').toString()
-        //     const compraIngresso = { data_compra: dataAtual, account_id: '10011011001', id_ingresso: '12345', id_show: '9876', valor: 670.30 }
-        //     chai.request(server)
-        //         .post('/transacao')
-        //         .send(compraIngresso)
-        //         .end((err, res) => {
-        //             res.should.have.property('status', 200)
-        //             done()
-        //         })
-        // })
-        // it('Deve retornar o id_transacao', done => {
-        //     const dataAtual = moment().format('YYYY-MM-DD').toString()
-        //     const compraIngresso = { data_compra: dataAtual, account_id: '12345', id_ingresso: '12345', id_show: '9876', valor: 670.30 }
-        //     chai.request(server)
-        //         .post('/transacao')
-        //         .send(compraIngresso)
-        //         .end((err, res) => {
-        //             res.should.have.property('status', 200)
-        //             res.should.have.property('body').and.be.a.Object()
-        //             res.body.should.have.property('id_transacao')
-        //             done()
-        //         })
-        // })
+        it('Deve retornar o id_transacao', done => {
+            const dataAtual = moment().format('YYYY-MM-DD').toString()
+            const compraIngresso = { data_compra: dataAtual, account_id: '12345', id_ingresso: '12345', id_show: '9876', valor: 670.30 }
+            chai.request(server)
+                .post('/api/v1/transacao')
+                .send(compraIngresso)
+                .end((err, res) => {
+                    res.should.have.property('status', 200)
+                    res.should.have.property('body').and.be.a.Object()
+                    res.body.should.have.property('id_transacao')
+                    done()
+                })
+        })
     })
 })
 

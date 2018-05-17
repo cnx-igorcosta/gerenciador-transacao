@@ -11,7 +11,7 @@ const port = 8080
 // Inicia conexão com banco
 db.connect(app);
 // Inicia espera de mensage queue
-transacaoReceiver.startListening()
+//transacaoReceiver.startListening()
 
 app.use(bodyParser.json())
 app.use(bodyParser.text())

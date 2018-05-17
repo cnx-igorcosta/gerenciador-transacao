@@ -1,0 +1,63 @@
+version: '3'
+networks:
+  fila:
+  app:
+  banco:
+services:
+#  rabbitmq:
+#    image: rabbitmq
+#    ports:
+#      - 5672
+#    networks:
+#      - fila
+
+  mongo:
+    image: mongo:3.4
+    networks:
+      - banco
+
+  api-foo:
+    image: node:8.1
+    volumes:
+      - ./api-foo:/api-foo
+    working_dir: /api-foo
+    ports:
+      - 3000:3000
+    command: bash -c "cd /api-foo && npm i && npm run dev:test"
+    networks:
+      - app
+      - banco
+    depends_on:
+      - mongo
+
+  api-fighters:
+    image: node:8.1
+    volumes:
+      - ./api-fighters:/api-fighters
+    working_dir: /api-fighters
+    ports:
+      - 6000:6000
+    command: bash -c "cd /api-fighters && npm i && npm run dev:test"
+    networks:
+      - app
+      - banco
+    depends_on:
+      - mongo
+
+  api-transacao-test:
+    image: node:8.1
+    volumes:
+      - ./api-transacao:/api-transacao
+    working_dir: /transacao
+    ports:
+      - 8080:8080
+    command: bash -c "cd /api-transacao && npm i && npm run test"
+    networks:
+      - app
+      - fila
+      - banco
+    depends_on:
+      - mongo
+      #- rabbitmq
+      - api-foo
+      - api-fighters
