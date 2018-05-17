@@ -61,3 +61,5 @@ services:
       #- rabbitmq
       - api-foo
       - api-fighters
+
+#sudo docker-compose -f ./docker-compose.test.yml up
