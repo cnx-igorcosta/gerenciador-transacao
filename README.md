@@ -16,7 +16,7 @@ Após clone
 ```sh
 $ cd desafio-b2w
 ```
-O Docker vai
+O Docker vai baixar todas as dependências, realizar build dos pacotes, e subir todos os containers.
 ```sh
 $ sudo docker-compose up -d
 ```
