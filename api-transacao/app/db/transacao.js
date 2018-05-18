@@ -28,6 +28,7 @@ transacaoDb.atualizarEstado = (estado, context) => {
         Transacao.findOneAndUpdate({ _id: id_transacao }, { $set:{ estado: estado } }, { new: true }, 
                 (err, transacao) => {
                     if(err) reject(err)
+                    context.transacao = transacao
                     resolve(context)
                 })
     })  

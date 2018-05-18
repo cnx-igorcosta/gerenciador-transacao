@@ -7,7 +7,7 @@ const queue = 'TRANSACAO_QUEUE'
 
 const transacaoQueue = {}
 // Objeto com funcao de conexao com o Rabbitmq e envio de mensagens
-transacaoQueue.send = (msg) => {
+transacaoQueue.send = (msg, callback) => {
     amqp.connect(uri, (err, conn) => {
       if(err) hanldeError(err, conn, 'Erro ao tentar se conectar.')
       else {
@@ -22,6 +22,7 @@ transacaoQueue.send = (msg) => {
             console.log(`Sent ${msg}`)
             // Fecha conexao
             setTimeout(() => { conn.close() }, 500)
+            if(callback) callback(true)
           }
         })
       }

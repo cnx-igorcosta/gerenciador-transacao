@@ -1,22 +1,29 @@
 import chai from 'chai'
 import chaiHttp from 'chai-http'
-import server from '../../server'
+import server from '../server'
 import should from 'should'
 import moment from 'moment'
 import mongoose from 'mongoose'
+import { httpGet } from '../app/services'
+import Transacao from '../app/models/transacao'
+import ValorPorShow from '../app/models/valor-show'
+import IngressoPorShow from '../app/models/ingresso-show'
 
-import Transacao from '../../app/models/transacao'
 
 chai.use(chaiHttp)
-describe('Validação da API Rest Transacao', () => {
+describe('Testes Integrados da aplicação API Transação', () => {
     beforeEach(done => { //Before each test we empty the database
         Transacao.remove({}, err => {
-            done();
+            ValorPorShow.remove({}, err => {
+                IngressoPorShow.remove({}, err => {
+                    done()
+              })
+          })
       })
     })
 
     describe("/GET '/'", () => {
-        it('deve retornar mensagem bem vindo', done => {
+        it('Deve retornar mensagem bem vindo', done => {
             chai.request(server)
                 .get('/')
                 .end((err, res) => {
@@ -29,7 +36,7 @@ describe('Validação da API Rest Transacao', () => {
       })
 
     describe('/POST /api/v1/transacao', () => {
-        it('deve retornar erro de todos 5 os campos obrigatorios', done => {
+        it('Deve retornar erro de todos 5 os campos obrigatorios', done => {
             chai.request(server)
                 .post('/api/v1/transacao')
                 .end((err, res) => {
@@ -40,7 +47,7 @@ describe('Validação da API Rest Transacao', () => {
                     done()
                 })
         })
-        it('deve retornar erro de campo obrigatório quando não é enviada data_compra', done => {
+        it('Deve retornar erro de campo obrigatório quando não é enviada data_compra', done => {
             const compraIngresso = { data_compra: '', account_id: '10011011001', id_ingresso: '12345', id_show: '9876', valor: 670.30 }
             chai.request(server)
                 .post('/api/v1/transacao')
@@ -54,7 +61,7 @@ describe('Validação da API Rest Transacao', () => {
                     done()
                 })
         })
-        it('deve retornar erro de data inválida quando data_compra não for um campo data válido', done => {
+        it('Deve retornar erro de data inválida quando data_compra não for um campo data válido', done => {
             const compraIngresso = { data_compra: 'invalida', account_id: '10011011001', id_ingresso: '12345', id_show: '9876', valor: 670.30 }
             chai.request(server)
                 .post('/api/v1/transacao')
@@ -68,7 +75,7 @@ describe('Validação da API Rest Transacao', () => {
                     done()
                 })
         })
-        it('deve retornar erro de data anterior à data atual quando data_compra não for superior à data atual', done => {
+        it('Deve retornar erro de data anterior à data atual quando data_compra não for superior à data atual', done => {
             const dataAtual = moment().subtract(1, "days").format('YYYY-MM-DD').toString()
             const compraIngresso = { data_compra: dataAtual, account_id: '10011011001', id_ingresso: '12345', id_show: '9876', valor: 670.30 }
             chai.request(server)
@@ -83,7 +90,7 @@ describe('Validação da API Rest Transacao', () => {
                     done()
                 })
         })
-        it('deve retornar erro de campo obrigatório quando não é enviado account_id', done => {
+        it('Deve retornar erro de campo obrigatório quando não é enviado account_id', done => {
             const dataAtual = moment().format('YYYY-MM-DD').toString()
             const compraIngresso = { data_compra: dataAtual, account_id: '', id_ingresso: '12345', id_show: '9876', valor: 670.30 }
             chai.request(server)
@@ -98,7 +105,7 @@ describe('Validação da API Rest Transacao', () => {
                     done()
                 })
         })
-        it('deve retornar erro de campo obrigatório quando não é enviado id_ingresso', done => {
+        it('Deve retornar erro de campo obrigatório quando não é enviado id_ingresso', done => {
             const dataAtual = moment().format('YYYY-MM-DD').toString()
             const compraIngresso = { data_compra: dataAtual, account_id: '312312', id_ingresso: '', id_show: '9876', valor: 670.30 }
             chai.request(server)
@@ -113,7 +120,7 @@ describe('Validação da API Rest Transacao', () => {
                     done()
                 })
         })
-        it('deve retornar erro de campo obrigatório quando não é enviado id_show', done => {
+        it('Deve retornar erro de campo obrigatório quando não é enviado id_show', done => {
             const dataAtual = moment().format('YYYY-MM-DD').toString()
             const compraIngresso = { data_compra: dataAtual, account_id: '312312', id_ingresso: '31213', id_show: '', valor: 670.30 }
             chai.request(server)
@@ -128,7 +135,7 @@ describe('Validação da API Rest Transacao', () => {
                     done()
                 })
         })
-        it('deve retornar erro de campo obrigatório quando não é enviado valor', done => {
+        it('Deve retornar erro de campo obrigatório quando não é enviado valor', done => {
             const dataAtual = moment().format('YYYY-MM-DD').toString()
             const compraIngresso = { data_compra: dataAtual, account_id: '312312', id_ingresso: '31213', id_show: '646345', valor: null }
             chai.request(server)
@@ -143,7 +150,7 @@ describe('Validação da API Rest Transacao', () => {
                     done()
                 })
         })
-        it('Deve retornar o id_transacao', done => {
+        it('Deve gravar nas API FOO E API FIGHTERS e retornar o id_transacao', done => {
             const dataAtual = moment().format('YYYY-MM-DD').toString()
             const compraIngresso = { data_compra: dataAtual, account_id: '12345', id_ingresso: '12345', id_show: '9876', valor: 670.30 }
             chai.request(server)
@@ -152,12 +159,21 @@ describe('Validação da API Rest Transacao', () => {
                 .end((err, res) => {
                     res.should.have.property('status', 200)
                     res.should.have.property('body').and.be.a.Object()
-                    res.body.should.have.property('id_transacao')
+                    res.body.should.have.property('transacao').and.be.a.Object()
+                    res.body.transacao.should.have.property('id_transacao')
+                    done()
+                })
+        })
+
+        it('Deve buscar transacao por id_transacao', done => {
+            chai.request(server)
+                .get('/api/v1/transacao?id_transacao=551137c2f9e1fac808a5f572')
+                .end((err, res) => {
+                    res.should.have.property('status', 200)
+                    res.should.have.property('body').and.be.a.Object()
                     done()
                 })
         })
     })
 })
 
-
-//testar se transacao com id_ingresso e id_show ja existe

@@ -39,7 +39,7 @@ const executarFluxoTransacao = (res, compraIngresso) => {
         // Atualiza estado da transacao para 'success'
         .then(context => transacaoDb.atualizarEstado(estados.SUCCESS, context))
         // Retorna status 200 com os dados da transação criada
-        .then(context => res.status(200).json({ transacao: context.compraIngresso }))
+        .then(context => res.status(200).json({ transacao: context.transacao }))
         // Trata erro colocando na fila para tentativa de processamento posterior
         .catch(err => handleError(err, res, context))
 }
@@ -83,19 +83,25 @@ const handleReenvioFila = (context, err) => {
     const compraIngresso = context.compraIngresso
     // Tenta reenviar para processamento até 5x, passando disso não coloca na fila novamente.
     // salva transação com estado 'fail'
-    if(compraIngresso.qtdReenvio < 1) {
-        console.log(`A Transacao ${compraIngresso.id_transacao} não foi executada com sucesso, será colocada na fila para reprocessamento.`)
+    if(compraIngresso.qtdReenvio < 5) {
+        if(process.env.NODE_ENV !== 'test') {
+            console.log(`A Transacao ${compraIngresso.id_transacao} não foi executada com sucesso, será colocada na fila para reprocessamento.`)
+        }
         // Envia para fila para reprocessamento posterior
         compraIngresso.qtdReenvio ++
         const msg = JSON.stringify(compraIngresso)
         setTimeout(() => transacaoQueue.send(msg), 5000)
+        return true
 
     } else {
-        console.log(`A Transacao ${compraIngresso.id_transacao} excedeu o limite de tentativas de reprocessamento.`)
+        if(process.env.NODE_ENV !== 'test') {
+            console.log(`A Transacao ${compraIngresso.id_transacao} excedeu o limite de tentativas de reprocessamento.`)
+        }
         if(compraIngresso.id_transacao) {
             // Altera estado para 'fail'
             transacaoDb.atualizarEstadoErro(compraIngresso.id_transacao, estados.FAIL, err.message)
         }
+        return false;
     }
 }
 
@@ -114,9 +120,9 @@ const handleResponse = (res, id_transacao, err) => {
       res.status(202).json({ id_transacao })
     } else {
       // Não foi possível gerar id_transacao mas ainda pode reprocessar as informações
-      res.status(202).json({ mensagem: 'Não foi possível gerar id_transacao', motivoFalha: err.message})
+      res.status(400).json({ mensagem: 'Não foi possível gerar id_transacao', motivoFalha: err.message})
     }
   }
   return colocarNaFila
 }
-export { postTransacao, getTransacao, executarFluxoTransacao }
+export { postTransacao, getTransacao, executarFluxoTransacao, handleReenvioFila }

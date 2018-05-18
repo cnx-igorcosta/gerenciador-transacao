@@ -12,6 +12,8 @@ const gravarValorPorShow = context => {
             .then(response => {
                 if(response.statusCode !== 200) 
                     reject(new Error('Não foi possível se comunicar com a API FIGHTERS.'))
+                
+                context.ingressoPorShowGravado = true
                 resolve(context)
             })
             .catch(err => reject(err))

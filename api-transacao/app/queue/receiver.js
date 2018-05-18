@@ -8,7 +8,7 @@ const queue = 'TRANSACAO_QUEUE'
 
 // Objeto com funcao de conexao com rabbitmq para espera de mensagens
 const transacaoReceiver = {
-  startListening: () => {
+  startListening: onReceive => {
     amqp.connect(uri, (err, conn) => {
       if(err) hanldeError(err, conn, 'Erro ao tentar se conectar com Rabbitmq.')
       else {
@@ -23,7 +23,7 @@ const transacaoReceiver = {
             ch.consume(queue, msg => {
               console.log(`Received ${msg.content}`)
               const compraIngresso = JSON.parse(msg.content)
-              executarFluxoTransacao(null, compraIngresso)
+              onReceive(null, compraIngresso)
             }, {noAck: false});
           }
         })

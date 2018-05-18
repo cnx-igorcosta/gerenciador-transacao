@@ -12,7 +12,7 @@
     "build-server": "babel -d ./dist/ server.js",
     "start": "npm run prd",
     "build": "npm run clean && npm run build-config && npm run build-app && npm run build-server",
-    "test": "export NODE_ENV=test && ./node_modules/mocha/bin/mocha test/**/*.js --require babel-register --reporter spec || exit 0"
+    "test": "export NODE_ENV=test && ./node_modules/mocha/bin/mocha test/*.js --require babel-register --reporter spec || exit 0"
   },
   "author": "igorgcosta",
   "license": "ISC",

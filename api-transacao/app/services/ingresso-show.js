@@ -18,8 +18,10 @@ const validarDuplicidadeIngresso = context => {
         .then(response => {
             if(response.statusCode !== 200) 
                 reject(new Error('Não foi possível se comunicar com a API FOO.'))
-            if(response.body && response.body.valid) 
+            if(response.body && response.body.valid) {
                 reject(new Error('id_ingresso por Show já existe!'))
+            }
+            context.ingresso_existente = false;
             resolve(context)
         })
         .catch(err => reject(err))
@@ -37,8 +39,10 @@ const gravarIngressoPorShow = context => {
     return new Promise((resolve, reject) => {
         httpPost(uri, ingressoPorShow)
             .then(response => {
-                if(response.statusCode !== 200) 
+                if(response.statusCode !== 200) {
                     reject(new Error('Não foi possível se comunicar com a API FOO.'))
+                }
+                context.ingressoPorShowGravado = true;
                 resolve(context)
             })
         .catch(err => reject(err))
