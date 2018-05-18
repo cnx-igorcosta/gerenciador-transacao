@@ -31,11 +31,6 @@ API FIGHTERS: 4000
 
 # Testes integrados e unitários
 Os testes são realizados através do ambiente Docker, para realizar os testes basta executar os seguintes comandos:
-Obs.:Entre os testes, utilizar o comando
-```sh
-$ sudo docker-compose down
-```
-para encerrar os containers daquele teste.
 
 API Transação
 ```sh
@@ -51,5 +46,9 @@ API FIGTHERS
 ```sh
 $ sudo docker-compose -f ./docker-compose.api-fighters-test.yml up
 ```
-
+Obs.:Entre os testes, utilizar o comando
+```sh
+$ sudo docker-compose down
+```
+para encerrar os containers daquele teste.
 
