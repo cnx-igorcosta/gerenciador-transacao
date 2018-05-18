@@ -160,7 +160,7 @@ describe('Testes Integrados da aplicação API Transação', () => {
                     res.should.have.property('status', 200)
                     res.should.have.property('body').and.be.a.Object()
                     res.body.should.have.property('transacao').and.be.a.Object()
-                    res.body.transacao.should.have.property('id_transacao')
+                    res.body.transacao.should.have.property('_id')
                     done()
                 })
         })
