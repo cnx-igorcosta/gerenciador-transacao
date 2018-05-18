@@ -1,0 +1,24 @@
+version: '3'
+networks:
+  app:
+  banco:
+services:
+
+  mongo:
+    image: mongo:3.4
+    networks:
+      - banco
+
+  api-fighters-test:
+    image: node:8.1
+    volumes:
+      - ./api-fighters:/api-fighters
+    working_dir: /api-fighters
+    ports:
+      - 6000:6000
+    command: bash -c "cd /api-fighters && npm i && npm run test"
+    networks:
+      - app
+      - banco
+    depends_on:
+      - mongo

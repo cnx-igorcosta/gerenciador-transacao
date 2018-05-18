@@ -25,7 +25,7 @@ const getTicketMedio = (req, res) => {
                 const valor_total = valores.reduce((memo, d) => memo + d.valor, 0)
                 res.status(200).json({ ticket_medio: valor_total / valores.length })
             } else {
-                res.status(200).json({ valor: 0 })
+                res.status(200).json({ ticket_medio: 0 })
             }
         })
         .catch(err => handleError(err, res))

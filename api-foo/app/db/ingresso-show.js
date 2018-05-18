@@ -5,9 +5,9 @@ const ingressoPorShowDb = {}
 ingressoPorShowDb.listarPorShow = (id_show) => {
     return new Promise((resolve, reject) => {
         const query = IngressoPorShow.find({id_show})
-        query.exec((err, ingressoPorShow) => {
+        query.exec((err, ingressos) => {
             if(err) reject(err)
-            resolve(ingressoPorShow)
+            resolve(ingressos)
         })
     })
 }
@@ -25,9 +25,9 @@ ingressoPorShowDb.buscarPorIngressoEShow = (id_ingresso, id_show) => {
 ingressoPorShowDb.salvar = ingressoPorShow => {
     return new Promise((resolve, reject) => {
         const newIngressoPorShow = new IngressoPorShow(ingressoPorShow)
-        newIngressoPorShow.save((err, ingressos) => {
+        newIngressoPorShow.save((err, ingresso) => {
             if(err) reject(err)
-            resolve(ingressos)
+            resolve(ingresso)
         })
     })
 }
