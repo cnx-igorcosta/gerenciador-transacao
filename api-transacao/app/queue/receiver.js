@@ -1,5 +1,4 @@
 import amqp from 'amqplib/callback_api'
-import { executarFluxoTransacao } from '../routes/transacao'
 
 // URI de conexao com o Rabbitmq
 const uri = 'amqp://rabbitmq'
