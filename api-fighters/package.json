@@ -1,7 +1,7 @@
 {
   "name": "api-foo",
   "version": "1.0.0",
-  "description": "api rest para gravacao de ingressos por show",
+  "description": "api rest para gravacao de valor por show",
   "main": "server.js",
   "scripts": {
     "dev": "export NODE_ENV=dev && nodemon server.js --exec babel-node",

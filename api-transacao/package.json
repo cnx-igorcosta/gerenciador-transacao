@@ -1,5 +1,5 @@
 {
-  "name": "compra-ingresso",
+  "name": "api-transacao",
   "version": "1.0.0",
   "description": "api rest para compra de ingressos",
   "main": "server.js",
