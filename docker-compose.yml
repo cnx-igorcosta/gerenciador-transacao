@@ -17,10 +17,11 @@ services:
       - banco
   
   api-transacao:
+    #build: api-transacao
     image: node:8.1
+    working_dir: /api-transacao
     volumes: 
       - ./api-transacao:/api-transacao
-    working_dir: /transacao
     ports:
       - 8080:8080
     command: bash -c "cd /api-transacao && npm i && npm run build && npm start"
@@ -31,14 +32,12 @@ services:
     depends_on:
       - rabbitmq
       - mongo
-      - api-foo
-      - api-fighters
 
   api-foo:
+    #build: api-foo
     image: node:8.1
     volumes:
       - ./api-foo:/api-foo
-    working_dir: /api-foo
     ports:
       - 3000:3000
     command: bash -c "cd /api-foo && npm i && npm run build && npm start"
@@ -49,10 +48,10 @@ services:
       - mongo
 
   api-fighters:
+    #build: api-fighters
     image: node:8.1
     volumes:
       - ./api-fighters:/api-fighters
-    working_dir: /api-fighters
     ports:
       - 4000:4000
     command: bash -c "cd /api-fighters && npm i && npm run build && npm start"
@@ -60,4 +59,18 @@ services:
       - app
       - banco
     depends_on:
+      - mongo
+
+  worker-transacao:
+    #build: worker-transacao
+    image: node:8.1
+    volumes:
+      - ./worker-transacao:/worker-transacao
+    command: bash -c "cd /worker-transacao && npm i && npm run build && npm start"
+    networks: 
+      - app
+      - fila
+      - banco
+    depends_on:
+      - rabbitmq
       - mongo

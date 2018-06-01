@@ -2,16 +2,13 @@ import express from 'express'
 import bodyParser from 'body-parser'
 
 import { db } from './app/db'
-import { postTransacao, getTransacao, executarFluxoTransacao } from './app/routes/transacao'
-import transacaoReceiver from './app/queue/receiver'
+import { postTransacao, getTransacao } from './app/routes/transacao'
 
 const app = express()
 const port = 8080
 
 // Inicia conexão com banco
 db.connect(app);
-// Inicia espera de mensage queue direcionando para fluxo de transacao
-transacaoReceiver.startListening(executarFluxoTransacao)
 
 app.use(bodyParser.json())
 app.use(bodyParser.text())

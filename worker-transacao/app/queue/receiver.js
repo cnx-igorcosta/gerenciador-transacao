@@ -21,8 +21,8 @@ const transacaoReceiver = {
             // Tratamento de quando chega mensagem
             ch.consume(queue, msg => {
               console.log(`Received ${msg.content}`)
-              const compraIngresso = JSON.parse(msg.content)
-              onReceive(null, compraIngresso)
+              const transacao = JSON.parse(msg.content)
+              onReceive(transacao)
             }, {noAck: false});
           }
         })

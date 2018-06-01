@@ -8,7 +8,6 @@ const queue = 'TRANSACAO_QUEUE'
 // Objeto com funcao de conexao com o Rabbitmq e envio de mensagens
 const transacaoQueue = {
   send: (msg, callback) => {
-    console.log('OPA')
     amqp.connect(uri, (err, conn) => {
       if(err) hanldeError(err, conn, 'Erro ao tentar se conectar.')
       else {
@@ -19,7 +18,6 @@ const transacaoQueue = {
             // Verifica se a queue existe        
             ch.assertQueue(queue, {durable: false})
             // Envio da mensagem
-            console.log('VAI ENVIAR',msg)
             ch.sendToQueue(queue, new Buffer(msg))
             console.log(`Sent ${msg}`)
             // Fecha conexao

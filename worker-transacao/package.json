@@ -1,0 +1,39 @@
+{
+  "name": "worker-transacao",
+  "version": "1.0.0",
+  "description": "worker para execucao de transacao de compra de ingressos",
+  "main": "index.js",
+  "scripts": {
+    "dev": "export NODE_ENV=dev && nodemon index.js --exec babel-node",
+    "prd": "export NODE_ENV=prd && node ./dist/index.js",
+    "clean": "rm -rf dist && mkdir dist && mkdir ./dist/app && mkdir ./dist/config",
+    "build-app": "babel -d ./dist/app app",
+    "build-config": "babel -d ./dist/config config",
+    "build-worker": "babel -d ./dist/ index.js",
+    "start": "npm run prd",
+    "build": "npm run clean && npm run build-config && npm run build-app && npm run build-worker",
+    "test": "export NODE_ENV=test && ./node_modules/mocha/bin/mocha test/*.js --require babel-register --reporter spec || exit 0"
+  },
+  "author": "igorgcosta",
+  "license": "ISC",
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.0",
+    "babel-preset-env": "^1.6.1",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-register": "^6.26.0",
+    "chai": "^4.1.2",
+    "chai-http": "^4.0.0",
+    "mocha": "^5.0.5",
+    "should": "^13.2.1",
+    "ws": "3.3.2"
+  },
+  "dependencies": {
+    "amqplib": "^0.5.2",
+    "config": "^1.30.0",
+    "mongoose": "^5.0.12",
+    "morgan": "^1.9.0",
+    "request": "^2.85.0",
+    "request-promise-native": "^1.0.5"
+  }
+}
