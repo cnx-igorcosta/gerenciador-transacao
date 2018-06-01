@@ -74,3 +74,6 @@ services:
     depends_on:
       - rabbitmq
       - mongo
+      - api-transacao
+      - api-foo
+      - api-fighters

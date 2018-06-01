@@ -18,7 +18,6 @@ describe('Testes Unitários de database da API Transação.', () => {
             done()
         }).catch(err => {
             console.log(err)
-            done()
         })
     })
     
@@ -30,46 +29,9 @@ describe('Testes Unitários de database da API Transação.', () => {
                 done()
             }).catch(err => {
                 console.log(err)
-                done()
             })
     })
 
-    it('Deve atualizar estado de transacao.', done => {
-        const context = { compraIngresso: { id_transacao: null }}
-        transacaoDb.salvar(transacao)
-            .then(transacao => { 
-                context.compraIngresso.id_transacao = transacao._id
-                return context
-            })
-            .then(context => transacaoDb.atualizarEstado('in_process', context))
-            .then(context => transacaoDb.buscarPorIdTransacao(context.compraIngresso.id_transacao))
-            .then(transacao => {
-                transacao.should.be.property('estado', 'in_process')
-                done()
-            }).catch(err => {
-                console.log(err)
-                done()
-            })
-    })
-
-    it("Deve atualizar estado 'fail' com motivoFalha pelo id_transacao.", done => {
-        const context = { compraIngresso: { id_transacao: null }}
-        transacaoDb.salvar(transacao)
-            .then(transacao => { 
-                context.compraIngresso.id_transacao = transacao._id
-                return context
-            })
-            .then(context =>transacaoDb.atualizarEstadoErro(context.compraIngresso.id_transacao, 'fail', 'teste falha'))
-            .then(transacao => transacaoDb.buscarPorIdTransacao(transacao._id))
-            .then(transacao => {
-                transacao.should.be.property('estado', 'fail')
-                transacao.should.be.property('motivoFalha', 'teste falha')
-                done()
-            }).catch(err => {
-                console.log(err)
-                done()
-            })
-    })
  })
 
  const transacao = {

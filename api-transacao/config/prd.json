@@ -1,3 +1,4 @@
 {
-  "DBHost": "mongodb://mongo/compra-ingresso"
+  "DBHost": "mongodb://mongo/compra-ingresso",
+  "QUEUE_NAME": "TRANSACAO_QUEUE"
 }

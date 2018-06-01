@@ -30,6 +30,19 @@ const transacaoQueue = {
   }
 }
 
+const enviarParaFila = transacao => {
+  return new Promise((resolve, reject) => {
+      try {
+          const msg = JSON.stringify(transacao._id)
+          transacaoQueue.send(msg)
+          resolve(transacao)
+      } catch(err) {
+          reject(err)
+      }
+
+  })
+}
+
 const hanldeError = (err, conn) => {
   // Fecha conexao se existir
   if(conn) {
@@ -39,4 +52,4 @@ const hanldeError = (err, conn) => {
   throw new Error(`Erro ao tentar enviar mensagem via rabbitmq: ${err.message}`)
 } 
 
-export default transacaoQueue
+export { transacaoQueue, enviarParaFila }

@@ -1,4 +1,4 @@
-import transacaoQueue from '../queue/sender'
+import { enviarParaFila } from '../queue/sender'
 import transacaoDb from '../db/transacao'
 import * as estados from '../domain/estados'
 import * as passos from '../domain/passos'
@@ -7,6 +7,7 @@ import { gravarValorShow } from './valor-show'
 
 // Primeiro passo, verifica se é a primeira tentativa de execução da transação
 const iniciarTransacao = transacao => {
+    const proximo_passo = passos.INGRESSO_SHOW 
     return new Promise((resolve, reject) => {
         // Se transação está com estado 'pending' é uma transação nova
         if(transacao.estado === estados.PENDING) {
@@ -15,9 +16,9 @@ const iniciarTransacao = transacao => {
             // Altera estado da transação para 'in_process'
             clone_transacao.estado = estados.IN_PROCESS
             // Cria registros iniciais dos passos da transacao
-            clone_transacao.passo_atual = passos.INGRESSO_SHOW 
+            clone_transacao.passo_atual = proximo_passo
             clone_transacao.passo_estado = estados.IN_PROCESS
-            clone_transacao.qtd_tentativas = 0
+            clone_transacao.qtd_retentativas = 0
             // Atualiza transação com novas informações
             transacaoDb.atualizar(clone_transacao)
                 // Coloca na fila para execução do próximo passo.
@@ -65,10 +66,11 @@ const handleError = (err, id_transacao) => {
         .then(transacao => {
             // Se tiver expirado o limite de tentativas
             // a transação é dada como falha
-            if(transacao.qtd_tentativas >= 5) {
+            if(transacao.qtd_retentativas >= 5) {
                 transacao.estado = estados.FAIL
                 transacao.mensagem = err.message
                 transacaoDb.atualizar(transacao)
+                //TODO: ROLLBACK
             } else {
                 transacao.passo_estado = estados.FAIL
                 transacaoDb.atualizar(transacao)
@@ -77,19 +79,6 @@ const handleError = (err, id_transacao) => {
             }
             return
         }).catch(err => console.log(`Erro ao tentar tratar falha de transacao. Erro: ${err}`))
-}
-
-const enviarParaFila = transacao => {
-    return new Promise((resolve, reject) => {
-        try {
-            const msg = JSON.stringify(transacao._id)
-            transacaoQueue.send(msg)
-            resolve(transacao)
-        } catch(err) {
-            reject(err)
-        }
-
-    })
 }
 
 // A execução da transação de compra de ingressos se dá verificando em 

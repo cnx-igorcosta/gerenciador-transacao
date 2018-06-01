@@ -1,3 +1,4 @@
 {
-  "DBHost": "mongodb://mongo/transacao-test"
+  "DBHost": "mongodb://mongo/transacao-test",
+  "QUEUE_NAME": "TRANSACAO_QUEUE_TEST"
 }

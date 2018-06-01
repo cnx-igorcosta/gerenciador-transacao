@@ -1,10 +1,10 @@
 import { httpPost } from './http'
-import transacaoQueue from '../queue/sender'
+import { enviarParaFila } from '../queue/sender'
 import transacaoDb from '../db/transacao'
 import * as estados from '../domain/estados'
 import * as passos from '../domain/passos'
 
-// URI DE POST DA API FIGHTERS
+// URI de POST da API FIGHTERS
 const uri = 'http://api-fighters:4000/api/v1/valores'
 // Próximo passo da transacao
 const proximo_passo = passos.FINALIZACAO
@@ -17,7 +17,7 @@ const gravarValorShow = transacao => {
             const clone_transacao = JSON.parse(JSON.stringify(transacao))
             // Aumenta o contador de tentativas da transacao se for reprocessamento
             if(clone_transacao.passo_estado === estados.FAIL) {
-                clone_transacao.qtd_tentativas++
+                clone_transacao.qtd_retentativas++
                 clone_transacao.atualizar(transacao)
             }
             // Cria VALOR POR SHOW com informações da transação
@@ -25,14 +25,14 @@ const gravarValorShow = transacao => {
                 id_show: clone_transacao.id_show,
                 valor: clone_transacao.valor
             }
-            // POST INGRESSO POR SHOW na API FIGHTERS
+            // POST VALOR POR SHOW na API FIGHTERS
             httpPost(uri, valorPorShow)
                 .then(response => {
-                    // Altera próximo passo da transacao
+                    // Passa transacao para próximo passo
                     clone_transacao.passo_atual = proximo_passo
                     clone_transacao.passo_estado = estados.IN_PROCESS
                     // Zera a quantidade de tentativas para pŕoximo passo
-                    clone_transacao.qtd_tentativas = 0
+                    clone_transacao.qtd_retentativas = 0
                     return clone_transacao
                 })
                 // Salva novas informações na base
@@ -45,19 +45,6 @@ const gravarValorShow = transacao => {
             // Transacao já passou pelo passo gravar VALOR POR SHOW
             resolve(transacao)
         }
-    })
-}
-
-const enviarParaFila = transacao => {
-    return new Promise((resolve, reject) => {
-        try {
-            const msg = JSON.stringify(transacao._id)
-            transacaoQueue.send(msg)
-            resolve(transacao)
-        } catch(err) {
-            reject(err)
-        }
-
     })
 }
 

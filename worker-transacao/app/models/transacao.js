@@ -11,7 +11,7 @@ const TransacaoSchema = new Schema (
         estado: { type: String, required: true },
         passo_atual: { type: String },
         passo_estado: { type: String },
-        qtd_tentativas: { type: Number },
+        qtd_retentativas: { type: Number },
         mensagem: { type: String }
     }
 )

@@ -22,45 +22,4 @@ transacaoDb.salvar = transacao => {
     })
 }
 
-transacaoDb.atualizar = transacao => {
-    const _id = transacao._id
-    const update = {
-        estado: transacao.estado,
-        passo_atual: transacao.passo_atual,
-        passo_estado: transacao.passo_estado,
-        qtd_tentativas: transacao.qtd_tentativas,
-        mensagem: transacao.mensagem
-    }
-    return new Promise((resolve, reject) => {
-        Transacao.findOneAndUpdate({ _id }, { $set: update }, { new: true }, 
-                (err, transacao) => {
-                    if(err) reject(err)
-                    resolve(transacao)
-                })
-    })  
-}
-
-transacaoDb.atualizarEstado = (estado, transacao) => {
-    const _id = transacao._id
-    return new Promise((resolve, reject) => {
-        Transacao.findOneAndUpdate({ _id }, { $set:{ estado } }, { new: true }, 
-                (err, transacao) => {
-                    if(err) reject(err)
-                    context.transacao = transacao
-                    resolve(context)
-                })
-    })  
-}
-
-
-transacaoDb.atualizarEstadoErro = (id_transacao, estado, motivoFalha) => {
-    return new Promise((resolve, reject) => {
-        Transacao.findOneAndUpdate({ _id: id_transacao }, { $set:{ estado: estado, motivoFalha: motivoFalha } }, { new: true }, 
-                (err, transacao) => {
-                    if(err) reject(err)
-                    resolve(transacao)
-                })
-    })  
-}
-
 export default transacaoDb
