@@ -5,9 +5,9 @@ const transacaoDb = {}
 transacaoDb.buscarPorIdTransacao = (id_transacao) => {
     return new Promise((resolve, reject) => {
         const query = Transacao.findById(id_transacao)
-        query.exec((err, transao) => {
+        query.exec((err, transacao) => {
             if(err) reject(err)
-            resolve(transao)
+            resolve(transacao)
         })
     })
 }

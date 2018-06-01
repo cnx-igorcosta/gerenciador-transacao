@@ -20,9 +20,13 @@ const transacaoReceiver = {
             console.log(`Waiting for messages in ${queue}...`)
             // Tratamento de quando chega mensagem
             ch.consume(queue, msg => {
-              console.log(`Received ${msg.content}`)
-              const transacao = JSON.parse(msg.content)
-              onReceive(transacao)
+              if(msg) {
+                console.log(`Received ${msg.content}`)
+                const transacao = JSON.parse(msg.content)
+                onReceive(transacao)
+                // Confirma recebimento da mensagem
+                ch.ack(msg)
+              }
             }, {noAck: false});
           }
         })

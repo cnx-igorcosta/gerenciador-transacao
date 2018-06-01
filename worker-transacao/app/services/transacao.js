@@ -5,21 +5,24 @@ import * as passos from '../domain/passos'
 import { gravarIngressoShow } from './ingresso-show'
 import { gravarValorShow } from './valor-show'
 
-// Verifica se é a primeira tentativa de execução da transação
+// Primeiro passo, verifica se é a primeira tentativa de execução da transação
 const iniciarTransacao = transacao => {
     return new Promise((resolve, reject) => {
         // Se transação está com estado 'pending' é uma transação nova
         if(transacao.estado === estados.PENDING) {
+            // Clona transacao para não alterar o original
+            const clone_transacao = JSON.parse(JSON.stringify(transacao))
             // Altera estado da transação para 'in_process'
-            transacao.estado = estados.IN_PROCESS
+            clone_transacao.estado = estados.IN_PROCESS
             // Cria registros iniciais dos passos da transacao
-            transacao.passo_atual = passos.INGRESSO_SHOW 
-            transacao.passo_estado = estados.IN_PROCESS
-            transacao.qtd_tentativas = 0
+            clone_transacao.passo_atual = passos.INGRESSO_SHOW 
+            clone_transacao.passo_estado = estados.IN_PROCESS
+            clone_transacao.qtd_tentativas = 0
             // Atualiza transação com novas informações
-            transacaoDb.atualizar(transacao)
+            transacaoDb.atualizar(clone_transacao)
                 // Coloca na fila para execução do próximo passo.
-                .then(transacao => { transacaoQueue.send(transacao._id); resolve(transacao) })
+                .then(transacao => enviarParaFila(transacao))
+                .then(transacao => resolve(transacao))
                 .catch(err => reject(err))
         } else {
             // Não é nova transação, passa para o próximo passo
@@ -28,17 +31,19 @@ const iniciarTransacao = transacao => {
     })
 }
 
-// Finalização da transacao se não houve falha
+// Último passo, finaliza a transacao com sucesso
 const finalizarTransacao = transacao => {
     return new Promise((resolve, reject) => {
         // Verifica se transacao está no passo 'finalizacao' e transacao está com estado 'in_process'
         if(transacao.passo_atual === passos.FINALIZACAO && transacao.estado === estados.IN_PROCESS) {
+            // Clona transacao para não alterar o original
+            const clone_transacao = JSON.parse(JSON.stringify(transacao))
             // Altera passo atual para finalização com sucesso
-            transacao.passo_estado = estados.SUCCESS
+            clone_transacao.passo_estado = estados.SUCCESS
             // Transacao concluida com sucesso
-            transacao.estado = estados.SUCCESS
+            clone_transacao.estado = estados.SUCCESS
             // Atualiza transação com novas informações
-            transacaoDb.atualizar(transacao)
+            transacaoDb.atualizar(clone_transacao)
                 .then(transacao => resolve(transacao))
                 .catch(err => reject(err))
         } else {
@@ -46,17 +51,7 @@ const finalizarTransacao = transacao => {
         resolve(transacao)
         }
     })
-    
 }
-
-// Cada passo verifica a condição da transacao para execução,
-// também sabe qual o próximo passo.
-const passosTransacao = [
-    iniciarTransacao,
-    gravarIngressoShow,
-    gravarValorShow,
-    finalizarTransacao
-]
 
 // Em caso de falha em algum passo, a transação é colocada na fila
 // para reexecução posterior. Cada passo tem um limite de 5 reprocessamentos,
@@ -75,10 +70,26 @@ const handleError = (err, id_transacao) => {
                 transacao.mensagem = err.message
                 transacaoDb.atualizar(transacao)
             } else {
-                transacaoQueue.send(id_transacao)
+                transacao.passo_estado = estados.FAIL
+                transacaoDb.atualizar(transacao)
+                    .then(enviarParaFila(transacao))
+                    .catch(err => console.log(`Erro ao tentar tratar falha de transacao. Erro: ${err}`))
             }
             return
         }).catch(err => console.log(`Erro ao tentar tratar falha de transacao. Erro: ${err}`))
+}
+
+const enviarParaFila = transacao => {
+    return new Promise((resolve, reject) => {
+        try {
+            const msg = JSON.stringify(transacao._id)
+            transacaoQueue.send(msg)
+            resolve(transacao)
+        } catch(err) {
+            reject(err)
+        }
+
+    })
 }
 
 // A execução da transação de compra de ingressos se dá verificando em 
@@ -87,9 +98,18 @@ const handleError = (err, id_transacao) => {
 const transacaoService = {
     executar: id_transacao => {
         transacaoDb.buscarPorIdTransacao(id_transacao)
-            .then(transacao => {
-                return Promise.all(passosTransacao)
-                            .catch(err => handleError(err, id_transacao))
+        .then(transacao => {
+            // Cada passo verifica a condição da transacao para execução.
+            // Após execução do passo, altera a transacao para ser verificada
+            // e executada pelo próximo passo até completar todos os passos.
+            return Promise.all(
+                    [
+                        iniciarTransacao(transacao),
+                        gravarIngressoShow(transacao),
+                        gravarValorShow(transacao),
+                        finalizarTransacao(transacao)
+                    ])
+                    .catch(err => handleError(err, id_transacao))
             })
     } 
 } 

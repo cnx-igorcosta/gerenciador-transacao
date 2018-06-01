@@ -13,34 +13,51 @@ const gravarIngressoShow = transacao => {
     return new Promise((resolve, reject) => {
         // Verifica se transacao está no passo 'ingresso_show' e transacao está com estado 'in_process'
         if(transacao.passo_atual === passos.INGRESSO_SHOW && transacao.estado === estados.IN_PROCESS) {
+            // Clona transacao para não alterar o original
+            const clone_transacao = JSON.parse(JSON.stringify(transacao))
             // Aumenta o contador de tentativas da transacao se for reprocessamento
-            if(transacao.passo_estado === estados.FAIL) {
-                transacao.qtd_tentativas++
+            if(clone_transacao.passo_estado === estados.FAIL) {
+                clone_transacao.qtd_tentativas++
+                transacaoDb.atualizar(clone_transacao)
             }
             // Cria INGRESSO POR SHOW com informações da transação
             const ingressoPorShow = {
-                id_ingresso: transacao.id_ingresso,
-                id_show: transacao.id_show,
+                id_ingresso: clone_transacao.id_ingresso,
+                id_show: clone_transacao.id_show,
             }
             // POST INGRESSO POR SHOW na API FOO
             httpPost(uri, ingressoPorShow)
                 .then(response => {
                     // Altera próximo passo da transacao
-                    transacao.passo_atual = proximo_passo
-                    transacao.passo_estado = estados.IN_PROCESS
+                    clone_transacao.passo_atual = proximo_passo
+                    clone_transacao.passo_estado = estados.IN_PROCESS
                     // Zera a quantidade de tentativas para pŕoximo passo
-                    transacao.qtd_tentativas = 0
-                    return transacao
+                    clone_transacao.qtd_tentativas = 0
+                    return clone_transacao
                 })
                 // Salva novas informações na base
-                .then(transacao => transacaoDb.atualizar(transacao))
+                .then(clone_transacao => transacaoDb.atualizar(clone_transacao))
                 // Coloca na fila para execução do próximo passo.
-                .then(transacao => { transacaoQueue.send(transacao._id); resolve(transacao) })
+                .then(transacao => enviarParaFila(transacao))
+                .then(transacao => resolve(transacao))
                 .catch(err => reject(err))
         } else {
             // Transacao já passou pelo passo gravar INGRESSO POR SHOW
             resolve(transacao)
         }
+    })
+}
+
+const enviarParaFila = transacao => {
+    return new Promise((resolve, reject) => {
+        try {
+            const msg = JSON.stringify(transacao._id)
+            transacaoQueue.send(msg)
+            resolve(transacao)
+        } catch(err) {
+            reject(err)
+        }
+
     })
 }
 

@@ -11,16 +11,10 @@ const options = {
 };
 
 const db = {
-    connect: (app) => { 
+    connect: () => { 
         mongoose.connect(uri, options)
         const db = mongoose.connection
         db.on('error', console.error.bind(console, 'connection error:'))
-
-        // Não mostra log quando esta em teste
-        if(config.util.getEnv('NODE_ENV') !== 'test') {
-            //usa morgan para logar via linha de comando
-            app.use(morgan('combined')) //'combined' outputs the Apache style LOGs
-        }
     }
 }
 

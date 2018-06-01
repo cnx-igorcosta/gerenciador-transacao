@@ -14,17 +14,16 @@ const getTransacao = (req, res) => {
 // POST at /api/v1/transacao
 const postTransacao = (req, res) => {
     const compraIngresso = req.body
-    console.log('chegou',compraIngresso);
     Promise.resolve(compraIngresso)
         // Valida obrigatoriedade.
         .then(compraIngresso => validar(compraIngresso))
         // Salva uma nova transação com estado 'pending'.
         .then(compraIngresso => salvarTransacao(compraIngresso))
         // Coloca na fila para execução de cada passo da transação assíncronamente.
-        .then(transacao => { transacaoQueue.send(transacao._id); return transacao })
+        .then(transacao => enviarParaFila(transacao))
         // Retorna status 202 com os dados da transação criada.
         // 202 significa que foi aceito pelo servidor e ainda está processando.
-        .then(transacao => res.status(202).json({ teste: 'teste' }))
+        .then(transacao => res.status(202).json({ transacao }))
         // Trata erro retornando mensagem e status.
         .catch(err => handleError(err, res))
 }
@@ -40,6 +39,19 @@ const salvarTransacao = compraIngresso => {
         transacaoDb.salvar(transacao)
             .then(transacao => resolve(transacao))
             .catch(err => reject(err))
+    })
+}
+
+const enviarParaFila = transacao => {
+    return new Promise((resolve, reject) => {
+        try {
+            const msg = JSON.stringify(transacao._id)
+            transacaoQueue.send(msg)
+            resolve(transacao)
+        } catch(err) {
+            reject(err)
+        }
+
     })
 }
 

@@ -8,7 +8,7 @@ const app = express()
 const port = 8080
 
 // Inicia conexão com banco
-db.connect(app);
+db.connect(app)
 
 app.use(bodyParser.json())
 app.use(bodyParser.text())
