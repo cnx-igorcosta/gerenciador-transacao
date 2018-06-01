@@ -1,3 +1,4 @@
+import config from 'config'
 import { httpPost } from './http'
 import { enviarParaFila } from '../queue/sender'
 import transacaoDb from '../db/transacao'
@@ -5,7 +6,7 @@ import * as estados from '../domain/estados'
 import * as passos from '../domain/passos'
 
 // URI de POST da API FIGHTERS
-const uri = 'http://api-fighters:4000/api/v1/valores'
+const uri = config.URI_API_FIGHTERS
 // Próximo passo da transacao
 const proximo_passo = passos.FINALIZACAO
 

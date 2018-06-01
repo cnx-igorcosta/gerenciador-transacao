@@ -1,3 +1,4 @@
+import config from 'config'
 import { httpPost } from './http'
 import { enviarParaFila } from '../queue/sender'
 import transacaoDb from '../db/transacao'
@@ -5,7 +6,7 @@ import * as estados from '../domain/estados'
 import * as passos from '../domain/passos'
 
 // URI de POST da API FOO
-const uri = 'http://api-foo:3000/api/v1/tickets'
+const uri = config.URI_API_FOO
 // Próximo passo da transacao
 const proximo_passo = passos.VALOR_SHOW
 

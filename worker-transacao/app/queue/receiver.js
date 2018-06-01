@@ -1,9 +1,10 @@
 import amqp from 'amqplib/callback_api'
+import config from 'config'
 
 // URI de conexao com o Rabbitmq
-const uri = 'amqp://rabbitmq'
+const uri = config.URI_RABBITMQ
 // Nome da queue
-const queue = 'TRANSACAO_QUEUE'
+const queue = config.QUEUE_NAME
 
 // Objeto com funcao de conexao com rabbitmq para espera de mensagens
 const transacaoReceiver = {
@@ -22,8 +23,8 @@ const transacaoReceiver = {
             ch.consume(queue, msg => {
               if(msg) {
                 console.log(`Received ${msg.content}`)
-                const transacao = JSON.parse(msg.content)
-                onReceive(transacao)
+                const id_transacao = JSON.parse(msg.content)
+                onReceive(id_transacao)
                 // Confirma recebimento da mensagem
                 ch.ack(msg)
               }

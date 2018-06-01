@@ -2,7 +2,7 @@ import amqp from 'amqplib/callback_api'
 import config from 'config'
 
 // URI de conexao com o Rabbitmq
-const uri = 'amqp://rabbitmq'
+const uri = config.URI_RABBITMQ
 // Nome da queue
 const queue = config.QUEUE_NAME
 

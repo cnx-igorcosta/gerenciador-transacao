@@ -3,7 +3,7 @@ import morgan from 'morgan'
 import config from 'config'
 
 // Conexão db
-const uri = config.DBHost
+const uri = config.URI_MONGODB
 // Opções db
 const options = {
     keepAlive: 300000,

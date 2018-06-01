@@ -15,7 +15,7 @@ describe('Testes Unitários de queue da API Transação', () => {
                     done()
                 }
                 const sucesso = transacaoQueue.send(msg, callback)
-            }, 1000)
+            }, 1500)
         } catch(err) {
             console.log(err)
         }

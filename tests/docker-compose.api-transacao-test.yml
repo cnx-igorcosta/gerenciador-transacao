@@ -19,8 +19,7 @@ services:
   api-transacao-test:
     image: node:8.1
     volumes:
-      - ./api-transacao:/api-transacao
-    working_dir: /transacao
+      - ../api-transacao:/api-transacao
     ports:
       - 8080:8080
     command: bash -c "cd /api-transacao && npm i && npm run test"
@@ -32,4 +31,4 @@ services:
       - rabbitmq
       - mongo
 
-#sudo docker-compose -f ./docker-compose.api-transacao-test.yml up
+#sudo docker-compose -f ./tests/docker-compose.api-transacao-test.yml up

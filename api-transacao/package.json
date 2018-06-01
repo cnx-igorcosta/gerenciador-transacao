@@ -5,6 +5,7 @@
   "main": "server.js",
   "scripts": {
     "dev": "export NODE_ENV=dev && nodemon server.js --exec babel-node",
+    "dev:test": "export NODE_ENV=test && nodemon server.js --exec babel-node",
     "prd": "export NODE_ENV=prd && node ./dist/server.js",
     "clean": "rm -rf dist && mkdir dist && mkdir ./dist/app && mkdir ./dist/config",
     "build-app": "babel -d ./dist/app app",

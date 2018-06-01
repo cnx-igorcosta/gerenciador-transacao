@@ -1,3 +1,7 @@
 {
-  "DBHost": "mongodb://mongo/compra-ingresso"
+  "URI_MONGODB": "mongodb://mongo/transacao",
+  "URI_RABBITMQ": "amqp://rabbitmq",
+  "QUEUE_NAME": "TRANSACAO_QUEUE",
+  "URI_API_FOO": "http://api-foo:3000/api/v1/tickets",
+  "URI_API_FIGHTERS": "http://api-fighters:4000/api/v1/valores"
 }

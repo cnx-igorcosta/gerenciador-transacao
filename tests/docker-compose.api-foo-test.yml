@@ -12,7 +12,7 @@ services:
   api-foo-test:
     image: node:8.1
     volumes:
-      - ./api-foo:/api-foo
+      - ../api-foo:/api-foo
     working_dir: /api-foo
     ports:
       - 3000:3000

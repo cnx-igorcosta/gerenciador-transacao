@@ -1,9 +1,10 @@
 import amqp from 'amqplib/callback_api'
+import config from 'config'
 
 // URI de conexao com o Rabbitmq
-const uri = 'amqp://rabbitmq'
+const uri = config.URI_RABBITMQ
 // Nome da queue
-const queue = 'TRANSACAO_QUEUE'
+const queue = config.QUEUE_NAME
 
 // Objeto com funcao de conexao com o Rabbitmq e envio de mensagens
 const transacaoQueue = {

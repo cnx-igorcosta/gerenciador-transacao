@@ -12,7 +12,7 @@ services:
   api-fighters-test:
     image: node:8.1
     volumes:
-      - ./api-fighters:/api-fighters
+      - ../api-fighters:/api-fighters
     working_dir: /api-fighters
     ports:
       - 6000:6000

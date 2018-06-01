@@ -1,4 +1,8 @@
 {
-    "DBHost": "mongodb://localhost:27017/transacao-dev"
+    "URI_MONGODB": "mongodb://localhost:27017/transacao-dev",
+    "URI_RABBITMQ": "amqp://localhost:5672",
+    "QUEUE_NAME": "TRANSACAO_QUEUE_DEV",
+    "URI_API_FOO": "http:/localhost:3000/api/v1/tickets",
+    "URI_API_FIGHTERS": "http://localhost:4000/api/v1/valores"
 }
   
