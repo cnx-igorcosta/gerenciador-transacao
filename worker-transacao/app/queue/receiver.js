@@ -18,11 +18,14 @@ const transacaoReceiver = {
           else {
             // Verifica se a queue existe
             ch.assertQueue(queue, {durable: false})
-            console.log(`Waiting for messages in ${queue}...`)
+            // Em caso de teste não imprime queue no console
+            if(process.env.NODE_ENV !== 'test') {
+              console.log(`Waiting for messages in ${queue}...`)
+            }
             // Tratamento de quando chega mensagem
             ch.consume(queue, msg => {
               if(msg) {
-                console.log(`Received ${msg.content}`)
+                //console.log(`Received ${msg.content}`)
                 const id_transacao = JSON.parse(msg.content)
                 onReceive(id_transacao)
                 // Confirma recebimento da mensagem

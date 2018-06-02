@@ -1,11 +1,12 @@
 import express from 'express'
 import bodyParser from 'body-parser'
+import config from 'config'
 
 import { db } from './app/db'
 import { getValorPorShow, postValorPorShow, getTicketMedio } from './app/routes/valor-show.js'
 
 const app = express()
-const port = 4000
+const port = config.PORT
 
 // Conexão com banco
 db.connect(app);

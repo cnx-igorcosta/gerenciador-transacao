@@ -1,3 +1,4 @@
 {
-  "DBHost": "mongodb://mongo/ingresso-por-show"
+  "PORT": 3000,
+  "URI_MONGODB": "mongodb://mongo/ingresso-por-show"
 }

@@ -2,6 +2,7 @@
   "URI_MONGODB": "mongodb://mongo/transacao-test",
   "URI_RABBITMQ": "amqp://rabbitmq",
   "QUEUE_NAME": "TRANSACAO_QUEUE_TEST",
-  "URI_API_FOO": "http://api-foo:3000/api/v1/tickets",
-  "URI_API_FIGHTERS": "http://api-fighters:4000/api/v1/valores"
+  "URI_API_FOO": "http://api-foo-dev-test:3001/api/v1/tickets",
+  "URI_API_FIGHTERS": "http://api-fighters-dev-test:4001/api/v1/valores",
+  "URI_API_FOO_VALIDATE": "http://api-foo-dev-test:3001/api/v1/tickets/validate"
 }

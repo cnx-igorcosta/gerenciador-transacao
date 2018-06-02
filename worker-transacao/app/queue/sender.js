@@ -20,7 +20,7 @@ const transacaoQueue = {
             ch.assertQueue(queue, {durable: false})
             // Envio da mensagem
             ch.sendToQueue(queue, new Buffer(msg))
-            console.log(`Sent ${msg}`)
+            //console.log(`Sent ${msg}`)
             // Fecha conexao
             setTimeout(() => { conn.close() }, 500)
             if(callback) callback(true)

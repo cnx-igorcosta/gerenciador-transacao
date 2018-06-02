@@ -1,11 +1,12 @@
 import express from 'express'
 import bodyParser from 'body-parser'
+import config from 'config'
 
 import { db } from './app/db'
 import { postIngressoPorShow, getTotalIngressoPorShow, getIngressoShowValido } from './app/routes/ingresso-show.js'
 
 const app = express()
-const port = 3000
+const port = config.PORT
 
 // Conexão com banco
 db.connect(app);

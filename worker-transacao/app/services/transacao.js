@@ -103,4 +103,4 @@ const transacaoService = {
     } 
 } 
 
-export { transacaoService }
+export { transacaoService, iniciarTransacao, finalizarTransacao }
