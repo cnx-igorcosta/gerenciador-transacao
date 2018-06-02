@@ -2,7 +2,7 @@
 Feita para o [Desafio B2W](https://github.com/admatic-tool/vaga-b2wads-senior), consiste em três APIs Rest e um worker para gerenciamento de transações. Foram feitas utilizando NodeJs com framework Express, ES6, MongoDb, Rabbitmq e Docker Compose.
 
 ## Detalhes
-A **api-transacao** recebe informaçes de COMPRA DE INGRESSOS, após realizar algumas validaçes, a API cria uma nova transação e a envia para fila, devolve para o chamador as informações da transação criada com estado 'pending'. 
+A **api-transacao** recebe informaçes de COMPRA DE INGRESSOS, após realizar algumas validaçes, a API cria uma nova transação, envia para fila e devolve para o chamador as informações da transação criada com estado 'pending'. 
 O **worker-transacao** recupera a transação da fila e executa todos os passos para finalização da transação com sucesso.
 
 Os passos para finalização da transação são:
