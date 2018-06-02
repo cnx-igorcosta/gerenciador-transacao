@@ -1,17 +1,21 @@
 # desafio-b2w
 Feita para o [Desafio B2W](https://github.com/admatic-tool/vaga-b2wads-senior), consiste em três API Rest feita em NodeJs, utilizando o framework Express, ES6, MongoDb, Rabbitmq e Docker Compose.
 
-# Detalhes
-A API Transação recebe informaçes de COMPRA DE INGRESSOS, após realizar algumas validaçes, a API cria uma nova transação, 
-depois envia informaçes de INGRESSO POR SHOW para serem gravadads na API FOO e informaçes de VALOR POR SHOW na API FIGHTERS.
-Caso ocorra alguma indisponibilidade enquanto a Transação está sendo processada, as informações de COMPRA DE INGRESSOS são colocadas
-em um Fila, para reprocessamento posterior, são realizadas até 5 tentativas de reprocessamento antes que a transação seja considerada
-falha. Em caso de sucesso na transação, são retornadas as informações de COMPRA DE INGRESSO e i id da transação.
+## Detalhes
+A **api-transacao** recebe informaçes de COMPRA DE INGRESSOS, após realizar algumas validaçes, a API cria uma nova transação e a envia para fila, devolve para o chamador as informações da transação criada com estado 'pending'. 
+O **worker-transacao** recupera a transação da fila e executa todos os passos para finalização da transação com sucesso.
 
-# Dependência
+Os passos para finalização da transação são:
+- Enviar informaçes de INGRESSO POR SHOW para serem gravadads na **api-foo**.
+- Enviar informaçes de VALOR POR SHOW na **api-fighters**.
+
+Caso ocorra alguma indisponibilidade enquanto a transação está sendo processada, a transação é colocada na fila para reprocessamento posterior, armazenando o passo em que a mesma parou, para que sejam executados apenas os passos que faltam.
+São realizadas até 5 tentativas de reprocessamento de cada passo antes que a transação seja considerada falha, executando rollback da transação. 
+
+## Dependência
 Necessário apenas ter o [Docker](https://docs.docker.com/install/) e [Docker Compose](https://docs.docker.com/compose/install/) instalados.
 
-# Instalação
+## Instalação
 Após clone
 ```sh
 $ cd desafio-b2w
@@ -22,32 +26,30 @@ $ sudo docker-compose up -d
 ```
 Aṕos o terminar de subir os containers das três aplicações, do mongoDb e do Rabbitmq, basta acessar as portas das APIs para utilização.
 
-# Portas das APIs
-API Transação: 8080
+## Portas das APIs
+> API Transação: 8080
+> API FOO: 3000
+> API FIGHTERS: 4000
 
-API FOO: 3000
-
-API FIGHTERS: 4000
-
-# Testes integrados e unitários
+## Testes integrados e unitários
 Os testes são realizados através do ambiente Docker, para realizar os testes basta executar os seguintes comandos:
 
-API Transação
+###API Transação
 ```sh
 $ sudo docker-compose -f ./tests/docker-compose-test.yml up api-transacao-test
 ```
 
-API FOO
+###API FOO
 ```sh
 $ sudo docker-compose -f ./tests/docker-compose-test.yml up api-foo-test
 ```
 
-API FIGTHERS
+###API FIGTHERS
 ```sh
 $ sudo docker-compose -f ./tests/docker-compose-test.yml up api-fighters-test
 ```
 
-Obs.: Entre os testes, utilizar o comando
+###**Obs.**: Entre os testes, utilizar o comando
 ```sh
 $ sudo docker-compose -f ./tests/docker-compose-test.yml down
 ```
