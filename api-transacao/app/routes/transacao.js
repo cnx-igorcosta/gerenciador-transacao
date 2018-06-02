@@ -60,7 +60,7 @@ const handleError = (err, res) => {
     if(process.env.NODE_ENV !== 'test') {
         console.log('Erro: ', err)
     }
-    res.status(400).json({ error: err.message })
+    res.status(400).json({ error: err })
 }
 
 export { postTransacao, getTransacao }

@@ -1,0 +1,120 @@
+version: '3'
+networks:
+  fila:
+  app:
+  banco:
+services:
+  rabbitmq:
+    image: rabbitmq
+    ports:
+      - 5672
+    networks:
+      - fila
+
+  mongo:
+    image: mongo:3.4
+    networks:
+      - banco
+
+  api-foo-test:
+    image: node:8.1
+    volumes:
+      - ../api-foo:/api-foo
+    working_dir: /api-foo
+    ports:
+      - 3000:3000
+    command: bash -c "cd /api-foo && npm i && npm run test"
+    networks:
+      - app
+      - banco
+    depends_on:
+      - mongo  
+
+  api-fighters-test:
+    image: node:8.1
+    volumes:
+      - ../api-fighters:/api-fighters
+    working_dir: /api-fighters
+    ports:
+      - 6000:6000
+    command: bash -c "cd /api-fighters && npm i && npm run test"
+    networks:
+      - app
+      - banco
+    depends_on:
+      - mongo  
+
+  api-transacao-test:
+    image: node:8.1
+    volumes:
+      - ../api-transacao:/api-transacao
+    ports:
+      - 8080:8080
+    command: bash -c "cd /api-transacao && npm i && npm run test"
+    networks:
+      - app
+      - fila
+      - banco
+    depends_on:
+      - rabbitmq
+      - mongo
+
+  api-foo-dev-test:
+    image: node:8.1
+    volumes:
+      - ../api-foo:/api-foo
+    ports:
+      - 3000:3000
+    command: bash -c "cd /api-foo && npm i && npm run dev:test"
+    networks:
+      - app
+      - banco
+    depends_on:
+      - mongo
+  
+  api-fighters-dev-test:
+    image: node:8.1
+    volumes:
+      - ../api-fighter:/api-fighter
+    ports:
+      - 4000:4000
+    command: bash -c "cd /api-fighter && npm i && npm run dev:test"
+    networks:
+      - app
+      - banco
+    depends_on:
+      - mongo
+
+  api-transacao-dev-test:
+    image: node:8.1
+    volumes:
+      - ../api-transacao:/api-transacao
+    ports:
+      - 8080:8080
+    command: bash -c "cd /api-fighter && npm i && npm run dev:test"
+    networks:
+      - app
+      - banco
+    depends_on:
+      - mongo
+
+  worker-transacao-test:
+    image: node:8.1
+    volumes:
+      - ../worker-transacao:/worker-transacao
+    command: bash -c "cd /worker-transacao && npm i && npm run test"
+    networks:
+      - app
+      - fila
+      - banco
+    depends_on:
+      - rabbitmq
+      - mongo
+      - api-foo-dev-test
+      - api-fighters-dev-test
+      - api-transacao-dev-test      
+
+#sudo docker-compose -f ./tests/docker-compose-test.yml up api-foo-test
+#sudo docker-compose -f ./tests/docker-compose-test.yml up api-fighters-test
+#sudo docker-compose -f ./tests/docker-compose-test.yml up api-transacao-test
+#sudo docker-compose -f ./tests/docker-compose-test.yml up worker-transacao-test
