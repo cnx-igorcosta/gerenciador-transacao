@@ -29,12 +29,12 @@ services:
     depends_on:
       - mongo
   
-  api-fighter-test:
+  api-fighters-test:
     image: node:8.1
     volumes:
       - ../api-fighter:/api-fighter
     ports:
-      - 3000:3000
+      - 4000:4000
     command: bash -c "cd /api-fighter && npm i && npm run dev:test"
     networks:
       - app
@@ -47,7 +47,7 @@ services:
     volumes:
       - ../api-transacao:/api-transacao
     ports:
-      - 3000:3000
+      - 8080:8080
     command: bash -c "cd /api-fighter && npm i && npm run dev:test"
     networks:
       - app
@@ -59,8 +59,6 @@ services:
     image: node:8.1
     volumes:
       - ../worker-transacao:/worker-transacao
-    ports:
-      - 8080:8080
     command: bash -c "cd /worker-transacao && npm i && npm run test"
     networks:
       - app

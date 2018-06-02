@@ -28,7 +28,7 @@ transacaoDb.atualizar = transacao => {
         estado: transacao.estado,
         passo_atual: transacao.passo_atual,
         passo_estado: transacao.passo_estado,
-        qtd_tentativas: transacao.qtd_tentativas,
+        qtd_retentativas: transacao.qtd_retentativas,
         mensagem: transacao.mensagem
     }
     return new Promise((resolve, reject) => {

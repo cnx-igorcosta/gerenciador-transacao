@@ -6,7 +6,7 @@ describe('Testes Unitários de queue da API Transação', () => {
     
     it('Deve enviar transacao como mensagem para a queue com sucesso', done => {
         const transacao = { _id: '551137c2f9e1fac808a5f572' }
-        const msg = JSON.stringify(transacao);
+        const msg = JSON.stringify(transacao._id);
         try{
             // Para esperar o tempo necessário para subir o rabbitmq
             setTimeout(() => {
