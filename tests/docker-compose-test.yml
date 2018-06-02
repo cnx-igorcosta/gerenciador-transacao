@@ -75,10 +75,10 @@ services:
   api-fighters-dev-test:
     image: node:8.1
     volumes:
-      - ../api-fighter:/api-fighter
+      - ../api-fighters:/api-fighters
     ports:
       - 4000:4000
-    command: bash -c "cd /api-fighter && npm i && npm run dev:test"
+    command: bash -c "cd /api-fighters && npm i && npm run dev:test"
     networks:
       - app
       - banco
