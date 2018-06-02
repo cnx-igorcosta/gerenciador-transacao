@@ -34,21 +34,22 @@ Os testes são realizados através do ambiente Docker, para realizar os testes b
 
 API Transação
 ```sh
-$ sudo docker-compose -f ./docker-compose.api-transacao-test.yml up
+$ sudo docker-compose -f ./tests/docker-compose-test.yml up api-transacao-test
 ```
 
 API FOO
 ```sh
-$ sudo docker-compose -f ./docker-compose.api-foo-test.yml up
+$ sudo docker-compose -f ./tests/docker-compose-test.yml up api-foo-test
 ```
 
 API FIGTHERS
 ```sh
-$ sudo docker-compose -f ./docker-compose.api-fighters-test.yml up
+$ sudo docker-compose -f ./tests/docker-compose-test.yml up api-fighters-test
 ```
-Obs.:Entre os testes, utilizar o comando
+
+Obs.: Entre os testes, utilizar o comando
 ```sh
-$ sudo docker-compose down
+$ sudo docker-compose -f ./tests/docker-compose-test.yml down
 ```
-para encerrar os containers daquele teste.
+para encerrar os containers do teste anterior.
 
