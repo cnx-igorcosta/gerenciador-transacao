@@ -36,11 +36,6 @@ Aṕos o terminar de subir os containers das três aplicações, do mongoDb e do
 ## Testes integrados e unitários
 Os testes são realizados através do ambiente Docker, para realizar os testes basta executar os seguintes comandos:
 
-### API Transação
-```sh
-$ sudo docker-compose -f ./tests/docker-compose-test.yml up api-transacao-test
-```
-
 ### API FOO
 ```sh
 $ sudo docker-compose -f ./tests/docker-compose-test.yml up api-foo-test
@@ -49,6 +44,16 @@ $ sudo docker-compose -f ./tests/docker-compose-test.yml up api-foo-test
 ### API FIGTHERS
 ```sh
 $ sudo docker-compose -f ./tests/docker-compose-test.yml up api-fighters-test
+```
+
+### API Transação
+```sh
+$ sudo docker-compose -f ./tests/docker-compose-test.yml up api-transacao-test
+```
+
+### Worker Transação
+```sh
+$ sudo docker-compose -f ./tests/docker-compose-test.yml up worker-transacao-test
 ```
 
 **Obs.**: Entre os testes, utilizar o comando
