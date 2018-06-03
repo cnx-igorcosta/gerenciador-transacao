@@ -1,58 +1,11 @@
-import { enviarParaFila } from '../queue/sender'
 import transacaoDb from '../db/transacao'
-import * as estados from '../domain/estados'
-import * as passos from '../domain/passos'
+import { enviarParaFila } from '../queue/sender'
+import { iniciarTransacao } from './passo-inicial'
+import { finalizarTransacao } from './passo-final'
 import { gravarIngressoShow } from './ingresso-show'
 import { gravarValorShow } from './valor-show'
-
-// Primeiro passo, verifica se é a primeira tentativa de execução da transação
-const iniciarTransacao = transacao => {
-    const proximo_passo = passos.INGRESSO_SHOW 
-    return new Promise((resolve, reject) => {
-        // Se transação está com estado 'pending' é uma transação nova
-        if(transacao.estado === estados.PENDING) {
-            // Clona transacao para não alterar o original
-            const clone_transacao = JSON.parse(JSON.stringify(transacao))
-            // Altera estado da transação para 'in_process'
-            clone_transacao.estado = estados.IN_PROCESS
-            // Cria registros iniciais dos passos da transacao
-            clone_transacao.passo_atual = proximo_passo
-            clone_transacao.passo_estado = estados.IN_PROCESS
-            clone_transacao.qtd_retentativas = 0
-            // Atualiza transação com novas informações
-            transacaoDb.atualizar(clone_transacao)
-                // Coloca na fila para execução do próximo passo.
-                .then(transacao => enviarParaFila(transacao))
-                .then(transacao => resolve(transacao))
-                .catch(err => reject(err))
-        } else {
-            // Não é nova transação, passa para o próximo passo
-            resolve(transacao)
-        }
-    })
-}
-
-// Último passo, finaliza a transacao com sucesso
-const finalizarTransacao = transacao => {
-    return new Promise((resolve, reject) => {
-        // Verifica se transacao está no passo 'finalizacao' e transacao está com estado 'in_process'
-        if(transacao.passo_atual === passos.FINALIZACAO && transacao.estado === estados.IN_PROCESS) {
-            // Clona transacao para não alterar o original
-            const clone_transacao = JSON.parse(JSON.stringify(transacao))
-            // Altera passo atual para finalização com sucesso
-            clone_transacao.passo_estado = estados.SUCCESS
-            // Transacao concluida com sucesso
-            clone_transacao.estado = estados.SUCCESS
-            // Atualiza transação com novas informações
-            transacaoDb.atualizar(clone_transacao)
-                .then(transacao => resolve(transacao))
-                .catch(err => reject(err))
-        } else {
-        // Não é finalizacao, passa para o próximo passo
-        resolve(transacao)
-        }
-    })
-}
+import * as estados from '../domain/estados'
+import * as passos from '../domain/passos'
 
 // Em caso de falha em algum passo, a transação é colocada na fila
 // para reexecução posterior. Cada passo tem um limite de 5 reprocessamentos,
@@ -73,8 +26,9 @@ const handleError = (err, id_transacao) => {
                 transacao.estado = estados.FAIL
                 transacao.mensagem = err.message
                 transacaoDb.atualizar(transacao)
-                //TODO: ROLLBACK
             } else {
+                // Altera o estado do passo em que a transação
+                // está para fail, e coloca na fila para reexecução
                 transacao.passo_estado = estados.FAIL
                 transacaoDb.atualizar(transacao)
                     .then(enviarParaFila(transacao))
@@ -111,4 +65,4 @@ const transacaoService = {
     } 
 } 
 
-export { transacaoService, iniciarTransacao, finalizarTransacao }
+export { transacaoService }

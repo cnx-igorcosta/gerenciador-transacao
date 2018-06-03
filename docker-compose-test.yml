@@ -93,7 +93,7 @@ services:
       - mongo
 
   # Container da api-foo rodando em dev com configurações de teste
-  # para comunicação com os testes de worker-transacao      
+  # para integração com os testes de worker-transacao      
   api-foo-dev-test:
     image: node:8.1
     volumes:
@@ -108,7 +108,7 @@ services:
       - mongo
 
   # Container da api-fighters rodando em dev com configurações de teste
-  # para comunicação com os testes de worker-transacao      
+  # para integração com os testes de worker-transacao      
   api-fighters-dev-test:
     image: node:8.1
     volumes:
