@@ -16,6 +16,7 @@ services:
     networks:
       - banco
 
+  # Testes do container de api-foo      
   api-foo-test:
     image: node:8.1
     volumes:
@@ -30,6 +31,7 @@ services:
     depends_on:
       - mongo  
 
+  # Testes do container de api-fighters
   api-fighters-test:
     image: node:8.1
     volumes:
@@ -44,6 +46,7 @@ services:
     depends_on:
       - mongo  
 
+  # Testes do container de api-transacao
   api-transacao-test:
     image: node:8.1
     volumes:
@@ -58,46 +61,8 @@ services:
     depends_on:
       - rabbitmq
       - mongo
-
-  api-foo-dev-test:
-    image: node:8.1
-    volumes:
-      - ./api-foo:/api-foo
-    ports:
-      - 3001:3001
-    command: bash -c "cd /api-foo && npm i && npm run dev:test"
-    networks:
-      - app
-      - banco
-    depends_on:
-      - mongo
   
-  api-fighters-dev-test:
-    image: node:8.1
-    volumes:
-      - ./api-fighters:/api-fighters
-    ports:
-      - 4001:4001
-    command: bash -c "cd /api-fighters && npm i && npm run dev:test"
-    networks:
-      - app
-      - banco
-    depends_on:
-      - mongo
-
-  api-transacao-dev-test:
-    image: node:8.1
-    volumes:
-      - ./api-transacao:/api-transacao
-    ports:
-      - 8081:8081
-    command: bash -c "cd /api-fighter && npm i && npm run dev:test"
-    networks:
-      - app
-      - banco
-    depends_on:
-      - mongo
-
+  # Testes do container de worker transacao
   worker-transacao-test:
     image: node:8.1
     volumes:
@@ -112,8 +77,50 @@ services:
       - mongo
       - api-foo-dev-test
       - api-fighters-dev-test
-      - api-transacao-dev-test      
+  
+  # Testes de falha do container de worker transacao
+  worker-transacao-test-fail:
+    image: node:8.1
+    volumes:
+      - ./worker-transacao:/worker-transacao
+    command: bash -c "cd /worker-transacao && npm i && npm run test:fail"
+    networks:
+      - app
+      - fila
+      - banco
+    depends_on:
+      - rabbitmq
+      - mongo
 
+  # Container da api-foo rodando em dev com configurações de teste
+  # para comunicação com os testes de worker-transacao      
+  api-foo-dev-test:
+    image: node:8.1
+    volumes:
+      - ./api-foo:/api-foo
+    ports:
+      - 3001:3001
+    command: bash -c "cd /api-foo && npm i && npm run dev:test"
+    networks:
+      - app
+      - banco
+    depends_on:
+      - mongo
+
+  # Container da api-fighters rodando em dev com configurações de teste
+  # para comunicação com os testes de worker-transacao      
+  api-fighters-dev-test:
+    image: node:8.1
+    volumes:
+      - ./api-fighters:/api-fighters
+    ports:
+      - 4001:4001
+    command: bash -c "cd /api-fighters && npm i && npm run dev:test"
+    networks:
+      - app
+      - banco
+    depends_on:
+      - mongo
 #sudo docker-compose -f ./docker-compose-test.yml up api-foo-test
 #sudo docker-compose -f ./docker-compose-test.yml up api-fighters-test
 #sudo docker-compose -f ./docker-compose-test.yml up api-transacao-test

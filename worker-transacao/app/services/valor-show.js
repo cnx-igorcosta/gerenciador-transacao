@@ -16,11 +16,6 @@ const gravarValorShow = transacao => {
         if(transacao.passo_atual === passos.VALOR_SHOW && transacao.estado === estados.IN_PROCESS) {
             // Clona transacao para não alterar o original
             const clone_transacao = JSON.parse(JSON.stringify(transacao))
-            // Aumenta o contador de tentativas da transacao se for reprocessamento
-            if(clone_transacao.passo_estado === estados.FAIL) {
-                clone_transacao.qtd_retentativas++
-                clone_transacao.atualizar(transacao)
-            }
             // Cria VALOR POR SHOW com informações da transação
             const valorPorShow = {
                 id_show: clone_transacao.id_show,

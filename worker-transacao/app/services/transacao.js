@@ -57,6 +57,9 @@ const finalizarTransacao = transacao => {
 // Em caso de falha em algum passo, a transação é colocada na fila
 // para reexecução posterior. Cada passo tem um limite de 5 reprocessamentos,
 // após ultrapassar o limite a transação é dada como falha.
+// Quando a transação falha, é possível saber em que passo ela estava 
+// quando falhou, mensagem de erro, quantidade de retentativas 
+// e o estado dela ao consultar transação através da api-transacao
 const handleError = (err, id_transacao) => {
     // Em caso de teste não imprime erro no console
     if(process.env.NODE_ENV !== 'test') {
@@ -88,6 +91,11 @@ const transacaoService = {
     executar: id_transacao => {
         transacaoDb.buscarPorIdTransacao(id_transacao)
         .then(transacao => {
+            // Aumenta o contador de tentativas da transacao se for reprocessamento
+            if(transacao.passo_estado === estados.FAIL) {
+                transacao.qtd_retentativas++
+                transacaoDb.atualizar(transacao)
+            }
             // Cada passo verifica a condição da transacao para execução.
             // Após execução do passo, altera a transacao para ser verificada
             // e executada pelo próximo passo até completar todos os passos.

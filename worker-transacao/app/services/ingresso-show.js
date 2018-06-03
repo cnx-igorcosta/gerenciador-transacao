@@ -16,11 +16,6 @@ const gravarIngressoShow = transacao => {
         if(transacao.passo_atual === passos.INGRESSO_SHOW && transacao.estado === estados.IN_PROCESS) {
             // Clona transacao para não alterar o original
             const clone_transacao = JSON.parse(JSON.stringify(transacao))
-            // Aumenta o contador de tentativas da transacao se for reprocessamento
-            if(clone_transacao.passo_estado === estados.FAIL) {
-                clone_transacao.qtd_retentativas++
-                transacaoDb.atualizar(clone_transacao)
-            }
             // Cria INGRESSO POR SHOW com informações da transação
             const ingressoPorShow = {
                 id_ingresso: clone_transacao.id_ingresso,

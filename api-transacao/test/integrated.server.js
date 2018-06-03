@@ -4,8 +4,8 @@ import server from '../server'
 import should from 'should'
 import moment from 'moment'
 import mongoose from 'mongoose'
+import config from 'config'
 import Transacao from '../app/models/transacao'
-
 
 chai.use(chaiHttp)
 describe('Testes Integrados da aplicação API Transação', () => {

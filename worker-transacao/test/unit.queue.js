@@ -21,19 +21,4 @@ describe('Testes Unitários de queue da API Transação', () => {
             console.log(err)
         }
     })
-    
-    // it('Deve receber mensagem da queue com sucesso', done => {
-    //     try{
-    //         // Para esperar o tempo necessário para subir o rabbitmq
-    //         setTimeout(() => {
-    //             const callback = (id_transacao) => {
-    //                 id_transacao.should.not.be.empty()
-    //                 done()
-    //             }
-    //             receiver.startListening(callback)
-    //         }, 1500)
-    //     } catch(err) {
-    //         console.log(err)
-    //     }
-    // })
  })
