@@ -10,7 +10,7 @@ Os passos para finalização da transação são:
 - Enviar informaçes de VALOR POR SHOW para serem gravadas na **api-fighters**.
 
 Caso ocorra alguma indisponibilidade enquanto a transação está sendo processada, a transação é colocada na fila para reprocessamento posterior, armazenando o passo em que a mesma parou, para que sejam executados apenas os passos que faltam.
-São realizadas até 5 tentativas de reprocessamento de cada passo antes que a transação seja considerada falha, executando rollback da transação. 
+São realizadas até 5 tentativas de reprocessamento de cada passo antes que a transação seja considerada falha. 
 
 ## Dependência
 Necessário ter o [Docker](https://docs.docker.com/install/) e [Docker Compose](https://docs.docker.com/compose/install/) instalados.
