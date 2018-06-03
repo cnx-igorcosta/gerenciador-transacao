@@ -1,91 +1,99 @@
-// import chai from 'chai'
-// import should from 'should'
-// import config from 'config'
-// import { httpGet } from '../app/services/http'
-// import ValorPorShow from '../app/models/valor-show'
-// import Transacao from '../app/models/transacao'
-// import transacaoDb from '../app/db/transacao'
-// import { gravarValorShow } from '../app/services/valor-show'
-// import * as estados from '../app/domain/estados'
-// import * as passos from '../app/domain/passos'
+import chai from 'chai'
+import should from 'should'
+import config from 'config'
+import { httpGet } from '../app/services/http'
+import Transacao from '../app/models/transacao'
+import transacaoDb from '../app/db/transacao'
+import { iniciarTransacao, finalizarTransacao } from '../app/services/transacao'
+import * as estados from '../app/domain/estados'
+import * as passos from '../app/domain/passos'
 
-// describe('Testes Unitários de services de Worker Transação para chamadas à API FIGHTERS', () => {
-//     beforeEach(done => { //Before each test we empty the database
-//         ValorPorShow.remove({}, err => {
-//             Transacao.remove({}, err => {
-//                 done()
-//             })
-//         })
-//     })
+describe('Testes Unitários de services de Worker Transação gerenciamento dos passos inicial e final', () => {
+    beforeEach(done => { //Before each test we empty the database
+        Transacao.remove({}, err => {
+            done()
+        })
+    })
     
-//     it("Deve devolver transacao sem alterar seu estado e o passo quando passo não for 'VALOR_SHOW'", done => {
-//         const transacao = {
-//             estado: estados.PENDING,
-//             passo_atual: passos.INGRESSO_SHOW,
-//             passo_estado: estados.SUCCESS,
-//         }
-//         gravarIngressoShow(transacao)
-//             .then(transacao => {
-//                 transacao.should.have.property('estado',estados.PENDING)
-//                 transacao.should.have.property('passo_atual',passos.INGRESSO_SHOW)
-//                 done()
-//             })
-//     })
-//     it("Deve devolver transacao sem alterar seu estado e o passo quando passo for 'VALOR_SHOW' e estado não for 'in_process'", done => {
-//         const transacao = {
-//             estado: estados.PENDING,
-//             passo_atual: passos.INGRESSO_SHOW,
-//             passo_estado: estados.SUCCESS,
-//         }
-//         gravarIngressoShow(transacao)
-//             .then(transacao => {
-//                 transacao.should.have.property('estado', estados.PENDING)
-//                 transacao.should.have.property('passo_atual', passos.INGRESSO_SHOW)
-//                 done()
-//             })
-//     })
-//     // it("Deve gravar INGRESSO POR SHOW na API FOO quando transacao estiver no passo 'INGRESSO_SHOW' e estado 'in_process'", done => {
-//     //     const transacao = {
-//     //         data_compra: '2019-01-01T00:00:00.000Z',
-//     //         account_id: 265923,
-//     //         id_ingresso: "30",
-//     //         id_show: "865387",
-//     //         valor: 130,
-//     //         estado: estados.IN_PROCESS,
-//     //         passo_atual: passos.INGRESSO_SHOW,
-//     //         passo_estado: estados.IN_PROCESS,
-//     //     }
-//     //     const url = `${config.URI_API_FOO_VALIDATE}?id_show=${transacao.id_show}&id_ingresso=${transacao.id_ingresso}`
-//     //     transacaoDb.salvar(transacao)
-//     //         .then(transacao => gravarIngressoShow(transacao))
-//     //         .then(transacao => httpGet(url))
-//     //         .then(response => {
-//     //             response.should.have.property('body').and.be.a.Object()
-//     //             response.body.should.have.property('valid', true)
-//     //             done()
-//     //         })
-//     //         .catch(err => console.log(err))
-//     // })
-//     it("Deve mudar transacao para o passo FINALIZACAO quando transacao estiver no passo 'VALOR_SHOW' e estado 'in_process'", done => {
-//         const transacao = {
-//             data_compra: '2019-01-01T00:00:00.000Z',
-//             account_id: 265923,
-//             id_ingresso: "30",
-//             id_show: "865387",
-//             valor: 130,
-//             estado: estados.IN_PROCESS,
-//             passo_atual: passos.VALOR_SHOW,
-//             passo_estado: estados.IN_PROCESS,
-//         }
-//         transacaoDb.salvar(transacao)
-//             .then(transacao => gravarValorShow(transacao))
-//             .then(transacao => {
-//                 transacao.should.have.property('estado', 'in_process')
-//                 transacao.should.have.property('passo_atual', 'FINALIZACAO')
-//                 transacao.should.have.property('passo_estado', 'in_process')
-//                 done()
-//             })
-//             .catch(err => console.log(err))
-//     })
-//  })
+    describe('Passo Inicial da Transação', () => { 
+        it("Deve devolver transação sem alterar seu estado e o passo quando não tiver com estado 'pending'", done => {
+            const transacao = {
+                data_compra: '2019-01-01T00:00:00.000Z',
+                account_id: 265923,
+                id_ingresso: "30",
+                id_show: "865387",
+                valor: 130,
+                estado: estados.FAIL,
+            }
+            transacaoDb.salvar(transacao)
+                .then(transacao => iniciarTransacao(transacao))
+                .then(transacao => {
+                    transacao.should.have.property('estado',estados.FAIL)
+                    done()
+                })
+                .catch(err => console.log(err))
+        })
+        it("Deve alterar o estado para 'in_process', o passo para 'INGRESSO_SHOW', e estado do passo 'pending' quando transação estiver com estado 'pending'", done => {
+            const transacao = {
+                data_compra: '2019-01-01T00:00:00.000Z',
+                account_id: 265923,
+                id_ingresso: "30",
+                id_show: "865387",
+                valor: 130,
+                estado: estados.PENDING,
+            }
+            transacaoDb.salvar(transacao)
+                .then(transacao => iniciarTransacao(transacao))
+                .then(transacao => {
+                    transacao.should.have.property('estado', estados.IN_PROCESS)
+                    transacao.should.have.property('passo_atual', passos.INGRESSO_SHOW)
+                    transacao.should.have.property('passo_estado', estados.IN_PROCESS)
+                    done()
+                })
+                .catch(err => console.log(err))
+        })
+    })
+    describe('Passo Final da Transação', () => { 
+        it("Deve devolver transacao sem alterar seu estado quando não tiver no passo 'FINALIZACAO'", done => {
+            const transacao = {
+                data_compra: '2019-01-01T00:00:00.000Z',
+                account_id: 265923,
+                id_ingresso: "30",
+                id_show: "865387",
+                valor: 130,
+                estado: estados.IN_PROCESS,
+                passo_atual: passos.INGRESSO_SHOW,
+                passo_estado: estados.IN_PROCESS
+            }
+            transacaoDb.salvar(transacao)
+                .then(transacao => finalizarTransacao(transacao))
+                .then(transacao => {
+                    transacao.should.have.property('estado',estados.IN_PROCESS)
+                    done()
+                })
+                .catch(err => console.log(err))
+        })
+        it("Deve alterar o estado para 'success' e estado do passo para 'success' quando transação quando estiver no passo 'FINALIZACAO'", done => {
+            const transacao = {
+                data_compra: '2019-01-01T00:00:00.000Z',
+                account_id: 265923,
+                id_ingresso: "30",
+                id_show: "865387",
+                valor: 130,
+                estado: estados.IN_PROCESS,
+                passo_atual: passos.FINALIZACAO,
+                passo_estado: estados.IN_PROCESS
+            }
+            transacaoDb.salvar(transacao)
+                .then(transacao => finalizarTransacao(transacao))
+                .then(transacao => {
+                    transacao.should.have.property('estado', estados.SUCCESS)
+                    transacao.should.have.property('passo_atual', passos.FINALIZACAO)
+                    transacao.should.have.property('passo_estado', estados.SUCCESS)
+                    done()
+                })
+                .catch(err => console.log(err))
+        })
+    })
+ })
 

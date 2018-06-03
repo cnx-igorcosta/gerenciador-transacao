@@ -66,7 +66,7 @@ describe('Testes Unitários de services de Worker Transação para chamadas à A
             })
             .catch(err => console.log(err))
     })
-    it("Deve mudar transacao para o passo VALOR_SHOW quando transacao estiver no passo 'INGRESSO_SHOW' e estado 'in_process'", done => {
+    it("Deve mudar transacao para o passo VALOR_SHOW após gravar INGRESSO POR SHOW na api FOO", done => {
         const transacao = {
             data_compra: '2019-01-01T00:00:00.000Z',
             account_id: 265923,

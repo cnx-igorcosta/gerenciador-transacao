@@ -38,22 +38,22 @@ Os testes são realizados através do ambiente Docker, para realizar os testes b
 
 ### API FOO
 ```sh
-$ sudo docker-compose -f ./tests/docker-compose-test.yml up api-foo-test
+$ sudo docker-compose -f ./docker-compose-test.yml up api-foo-test
 ```
 
 ### API FIGTHERS
 ```sh
-$ sudo docker-compose -f ./tests/docker-compose-test.yml up api-fighters-test
+$ sudo docker-compose -f ./docker-compose-test.yml up api-fighters-test
 ```
 
 ### API Transação
 ```sh
-$ sudo docker-compose -f ./tests/docker-compose-test.yml up api-transacao-test
+$ sudo docker-compose -f ./docker-compose-test.yml up api-transacao-test
 ```
 
 ### Worker Transação
 ```sh
-$ sudo docker-compose -f ./tests/docker-compose-test.yml up worker-transacao-test
+$ sudo docker-compose -f ./docker-compose-test.yml up worker-transacao-test
 ```
 
 **Obs.**: Entre os testes, utilizar o comando

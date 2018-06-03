@@ -66,7 +66,7 @@ describe('Testes Unitários de services de Worker Transação para chamadas à A
             })
             .catch(err => console.log(err))
     })
-    it("Deve mudar transacao para o passo FINALIZACAO quando transacao estiver no passo 'VALOR_SHOW' e estado 'in_process'", done => {
+    it("Deve mudar transacao para o passo FINALIZACAO após gravar VALOR POR SHOW na api FIGHTERS", done => {
         const transacao = {
             data_compra: '2019-01-01T00:00:00.000Z',
             account_id: 265923,
