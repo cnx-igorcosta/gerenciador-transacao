@@ -46,12 +46,12 @@ Aṕos o terminar de subir os containers das aplicações, do mongoDb e do Rabbi
   - Default: http://localhost:3000/
   - POST de INGRESSO POR SHOW: http://localhost:3000/api/v1/tickets
     - Exemplo de INGRESSO POR SHOW:
-  ```sh
-  {
-    "id_ingresso": "33",
-    "id_show": "102"
-  }
-  ```
+    ```sh
+    {
+      "id_ingresso": "33",
+      "id_show": "102"
+    }
+    ```
   - GET Total de ingressos por show: http://localhost:3000/api/v1/ticket?id_show=[ID_DO_SHOW]
   - GET Valida se id_ingresso e id_show é uma combinação válida: http://localhost:3000/api/v1/tickets/validate?id_show=[ID_DO_SHOW]&id_ingresso=[ID_DO_INGRESSO]
   
@@ -59,12 +59,12 @@ Aṕos o terminar de subir os containers das aplicações, do mongoDb e do Rabbi
   - Default: http://localhost:4000/
   - POST de VALOR POR SHOW: http://localhost:4000/api/v1/valores
     - Exemplo de VALOR POR SHOW:
-  ```sh
-  {
-    "id_show": "102",
-    "valor": 330
-  }
-  ```
+    ```sh
+    {
+      "id_show": "102",
+      "valor": 330
+    }
+    ```
   - GET valor total por show: http://localhost:4000/api/v1/valores?id_show=[ID_DO_SHOW]
   - GET ticket médio do show: http://localhost:4000/api/v1/valores/ticket-medio?id_show=[ID_DO_SHOW]
 
