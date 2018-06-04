@@ -13,7 +13,7 @@ Caso ocorra alguma indisponibilidade enquanto a transação está sendo processa
 São realizadas até 5 tentativas de reprocessamento de cada passo antes que a transação seja considerada falha. 
 
 ## Dependência
-Necessário ter o [Docker](https://docs.docker.com/install/) e [Docker Compose](https://docs.docker.com/compose/install/) instalados.
+[Docker](https://docs.docker.com/install/) e [Docker Compose](https://docs.docker.com/compose/install/) instalados.
 
 ## Instalação
 Após clone, executar o comando:
