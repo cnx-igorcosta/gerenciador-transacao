@@ -52,7 +52,7 @@ $ sudo docker-compose up -d
     }
     ```
   - GET Total de ingressos por show: http://localhost:3000/api/v1/ticket?id_show=[ID_DO_SHOW]
-  - GET Valida se id_ingresso e id_show é uma combinação válida: http://localhost:3000/api/v1/tickets/validate?id_show=[ID_DO_SHOW]&id_ingresso=[ID_DO_INGRESSO]
+  - GET Valida se id_ingresso e id_show são uma combinação válida: http://localhost:3000/api/v1/tickets/validate?id_show=[ID_DO_SHOW]&id_ingresso=[ID_DO_INGRESSO]
   
 #### API FIGHTERS: 
   - Default: http://localhost:4000/
