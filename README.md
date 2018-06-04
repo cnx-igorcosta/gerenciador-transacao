@@ -20,11 +20,10 @@ Após clone, executar o comando:
 ```sh
 $ cd desafio-b2w
 ```
-O Docker vai baixar todas as dependências, realizar build dos pacotes, e subir todos os containers:
+O Docker vai baixar todas as dependências, realizar build dos pacotes, e subir todos os containers com as aplicações:
 ```sh
 $ sudo docker-compose up -d
 ```
-Aṕos o terminar de subir os containers das aplicações, do mongoDb e do Rabbitmq, basta acessar as portas das APIs para utilização.
 
 ## Endpoints das APIs
 #### API Transação: 
