@@ -18,7 +18,7 @@ São realizadas até 5 tentativas de reprocessamento de cada passo antes que a t
 ## Instalação
 Após clone, executar o comando:
 ```sh
-$ cd desafio-b2w
+$ cd gerenciador-transacao
 ```
 O Docker vai baixar todas as dependências, realizar build dos pacotes, e subir todos os containers com as aplicações:
 ```sh
